@@ -1,37 +1,42 @@
 /**
- * Entry point. For now: bootstrap the canvas and draw a placeholder so the
- * scaffold is verifiably working. Real engine/scenes land after the spec.
+ * Bootstrap: size the canvas to the viewport (DPR-aware), wire IME-safe input,
+ * and run the ABC practice scene through the game loop.
  */
+import { Loop } from './engine/loop'
+import { KeyboardInput } from './engine/input'
+import { PlayAbc } from './scenes/PlayAbc'
+
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement | null
 
-function resize(c: HTMLCanvasElement): void {
+function fit(c: HTMLCanvasElement, ctx: CanvasRenderingContext2D): { w: number; h: number } {
+  const dpr = Math.min(2, window.devicePixelRatio || 1)
   const vv = window.visualViewport
-  c.width = Math.floor(vv?.width ?? window.innerWidth)
-  c.height = Math.floor(vv?.height ?? window.innerHeight)
+  const w = Math.floor(vv?.width ?? window.innerWidth)
+  const h = Math.floor(vv?.height ?? window.innerHeight)
+  c.width = Math.floor(w * dpr)
+  c.height = Math.floor(h * dpr)
+  c.style.width = `${w}px`
+  c.style.height = `${h}px`
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+  return { w, h }
 }
 
-function boot(c: HTMLCanvasElement): void {
+function main(c: HTMLCanvasElement): void {
   const ctx = c.getContext('2d')
   if (!ctx) return
-  resize(c)
-  window.addEventListener('resize', () => {
-    resize(c)
-    draw(ctx, c)
+  let size = fit(c, ctx)
+  window.addEventListener('resize', () => { size = fit(c, ctx) })
+
+  const scene = new PlayAbc()
+  const input = new KeyboardInput()
+  input.attach(window)
+  input.onChar((ch) => scene.handleChar(ch))
+
+  const loop = new Loop()
+  loop.start((dt) => {
+    scene.update(dt)
+    scene.render(ctx, size.w, size.h)
   })
-  draw(ctx, c)
 }
 
-function draw(ctx: CanvasRenderingContext2D, c: HTMLCanvasElement): void {
-  ctx.fillStyle = '#1a1a2e'
-  ctx.fillRect(0, 0, c.width, c.height)
-  ctx.fillStyle = '#ffd166'
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
-  ctx.font = '48px Segoe UI, sans-serif'
-  ctx.fillText('🐒 Monkey Typing', c.width / 2, c.height / 2 - 30)
-  ctx.fillStyle = '#cccccc'
-  ctx.font = '20px Segoe UI, sans-serif'
-  ctx.fillText('Đang khởi tạo…', c.width / 2, c.height / 2 + 30)
-}
-
-if (canvas) boot(canvas)
+if (canvas) main(canvas)

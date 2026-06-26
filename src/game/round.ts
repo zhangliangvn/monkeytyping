@@ -33,6 +33,13 @@ export class Round {
   get currentWord(): string | undefined { return this.words[this.wi] }
   get finished(): boolean { return this.wi >= this.words.length }
 
+  /** Live accuracy (0..1) so far. */
+  get accuracy(): number { return this.stats.accuracy }
+  /** Current combo streak (resets to 0 on a typo). */
+  get comboCount(): number { return this.combo.count }
+  /** Number of words cleared so far. */
+  get cleared(): number { return this._cleared }
+
   press(ch: string, nowMs: number): { correct: boolean; wordCompleted: boolean } {
     if (this.finished) return { correct: false, wordCompleted: false }
     if (this.startMs === null) this.startMs = nowMs

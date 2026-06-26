@@ -30,6 +30,17 @@ describe('Round', () => {
     expect(r.result(60_000).stars).toBe(3)
   })
 
+  it('exposes live accuracy, current combo, and cleared count', () => {
+    const r = new Round(['ab', 'cd'])
+    r.press('a', 0); r.press('b', 10)
+    expect(r.comboCount).toBe(1)
+    expect(r.cleared).toBe(1)
+    expect(r.accuracy).toBe(1)
+    r.press('x', 20) // typo resets combo
+    expect(r.comboCount).toBe(0)
+    expect(r.accuracy).toBeCloseTo(2 / 3, 5)
+  })
+
   it('ignores presses after the round is finished', () => {
     const r = new Round(['a'])
     r.press('a', 0)
