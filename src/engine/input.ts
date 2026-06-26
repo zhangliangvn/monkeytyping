@@ -34,30 +34,50 @@ export function charFromEvent(e: KeyboardEvent): string | undefined {
   return undefined
 }
 
+export type KeyListener = (key: string) => void
+
+/** Navigation keys consumed by menus (not typed as characters). */
+const NAV_KEYS = new Set([
+  'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'Escape', 'Tab', 'Backspace',
+])
+
 export class KeyboardInput {
-  private listeners = new Set<CharListener>()
+  private charListeners = new Set<CharListener>()
+  private keyListeners = new Set<KeyListener>()
   private target: Window | HTMLElement | null = null
+
   private readonly handler = (ev: Event): void => {
     const e = ev as KeyboardEvent
     if (e.repeat) return
+    if (NAV_KEYS.has(e.key)) {
+      e.preventDefault()
+      for (const fn of this.keyListeners) fn(e.key)
+      return
+    }
     const ch = charFromEvent(e)
     if (ch === undefined) return
     if (ch === ' ') e.preventDefault()
-    for (const fn of this.listeners) fn(ch)
+    for (const fn of this.charListeners) fn(ch)
   }
 
   attach(target: Window | HTMLElement = window): void {
     this.target = target
-    target.addEventListener('keydown', this.handler)
+    target.addEventListener('keydown', this.handler, true)
   }
 
   detach(): void {
-    this.target?.removeEventListener('keydown', this.handler)
+    this.target?.removeEventListener('keydown', this.handler, true)
     this.target = null
   }
 
   onChar(fn: CharListener): () => void {
-    this.listeners.add(fn)
-    return () => this.listeners.delete(fn)
+    this.charListeners.add(fn)
+    return () => this.charListeners.delete(fn)
+  }
+
+  /** Raw navigation keys (ArrowUp/Down/Left/Right, Enter, Escape, Tab, Backspace). */
+  onKey(fn: KeyListener): () => void {
+    this.keyListeners.add(fn)
+    return () => this.keyListeners.delete(fn)
   }
 }

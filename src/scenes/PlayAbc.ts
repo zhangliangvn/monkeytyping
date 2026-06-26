@@ -5,6 +5,7 @@
  *
  * This is the first runnable vertical slice that demonstrates the differentiator.
  */
+import type { Scene, PlayOpts } from './Scene'
 import { Round } from '../game/round'
 import { fingerForChar, type Finger } from '../content/fingerMap'
 import { KeyboardGuide, type GuideState } from '../keyboard/KeyboardGuide'
@@ -36,7 +37,7 @@ function makeDrill(keys: string[], length: number): string[] {
   return out
 }
 
-export class PlayAbc {
+export class PlayAbc implements Scene {
   private round = new Round(makeDrill(STARTER_KEYS, 24))
   private guide = new KeyboardGuide()
   private timeMs = 0
@@ -45,6 +46,12 @@ export class PlayAbc {
   private wrongFlash = 0
   private monkeyBounce = 0
   private roundsDone = 0
+
+  constructor(private readonly opts: PlayOpts = {}) {}
+
+  onKey(key: string): void {
+    if (key === 'Escape') this.opts.onExit?.()
+  }
 
   handleChar(ch: string): void {
     if (this.round.finished) return
@@ -56,6 +63,11 @@ export class PlayAbc {
       this.pawT = 0
     }
     if (res.wordCompleted && this.round.finished) {
+      const out = this.round.result(this.timeMs)
+      this.opts.onRoundComplete?.({
+        levelId: this.opts.levelId ?? 'practice-abc',
+        stars: out.stars, accuracy: out.accuracy, cleared: out.cleared,
+      })
       this.roundsDone += 1
       this.round = new Round(makeDrill(STARTER_KEYS, 24))
       this.pawT = 0
@@ -83,7 +95,7 @@ export class PlayAbc {
 
     // monkey mascot
     const bounce = Math.sin(this.monkeyBounce * Math.PI) * h * 0.02
-    centeredText(ctx, '🐵', w / 2, h * 0.16 - bounce, `${Math.round(h * 0.12)}px serif`, '#fff')
+    centeredText(ctx, this.opts.characterEmoji ?? '🐵', w / 2, h * 0.16 - bounce, `${Math.round(h * 0.12)}px serif`, '#fff')
 
     // big target letter
     if (next && def) {

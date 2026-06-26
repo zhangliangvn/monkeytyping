@@ -6,7 +6,7 @@
  *
  * The falling-enemy arcade layer (lock-on, jump/attack/dodge) builds on this.
  */
-import type { Scene } from './Scene'
+import type { Scene, PlayOpts } from './Scene'
 import { Round } from '../game/round'
 import { fingerForChar, type Finger } from '../content/fingerMap'
 import { KeyboardGuide, type GuideState } from '../keyboard/KeyboardGuide'
@@ -46,6 +46,12 @@ export class PlayWord implements Scene {
   private monkeyX = 0
   private roundsDone = 0
 
+  constructor(private readonly opts: PlayOpts = {}) {}
+
+  onKey(key: string): void {
+    if (key === 'Escape') this.opts.onExit?.()
+  }
+
   handleChar(ch: string): void {
     if (this.round.finished) return
     const res = this.round.press(ch, this.timeMs)
@@ -57,6 +63,11 @@ export class PlayWord implements Scene {
     if (res.wordCompleted) {
       this.hop = 1
       if (this.round.finished) {
+        const out = this.round.result(this.timeMs)
+        this.opts.onRoundComplete?.({
+          levelId: this.opts.levelId ?? 'practice-word',
+          stars: out.stars, accuracy: out.accuracy, cleared: out.cleared,
+        })
         this.roundsDone += 1
         this.round = new Round(makeDrill(STARTER_WORDS, this.total))
       }
@@ -89,7 +100,7 @@ export class PlayWord implements Scene {
     ctx.beginPath(); ctx.moveTo(x0, trackY); ctx.lineTo(x1, trackY); ctx.stroke()
     const mx = x0 + (x1 - x0) * this.monkeyX
     const hopY = Math.sin(this.hop * Math.PI) * h * 0.04
-    centeredText(ctx, '🐵', mx, trackY - h * 0.03 - hopY, `${Math.round(h * 0.07)}px serif`, '#fff')
+    centeredText(ctx, this.opts.characterEmoji ?? '🐵', mx, trackY - h * 0.03 - hopY, `${Math.round(h * 0.07)}px serif`, '#fff')
     centeredText(ctx, '🏁', x1, trackY - h * 0.03, `${Math.round(h * 0.05)}px serif`, '#fff')
 
     // current word with per-char caret coloring
