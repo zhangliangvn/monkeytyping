@@ -41,6 +41,21 @@ describe('Round', () => {
     expect(r.accuracy).toBeCloseTo(2 / 3, 5)
   })
 
+  it('exposes in-word caret, typed prefix, and next char for word mode', () => {
+    const r = new Round(['cat', 'go'])
+    expect(r.nextChar).toBe('c')
+    expect(r.caretIndex).toBe(0)
+    r.press('c', 0)
+    expect(r.typedPrefix).toBe('c')
+    expect(r.nextChar).toBe('a')
+    r.press('x', 5) // wrong: caret holds
+    expect(r.caretIndex).toBe(1)
+    expect(r.nextChar).toBe('a')
+    r.press('a', 10); r.press('t', 15)
+    expect(r.currentWord).toBe('go')
+    expect(r.nextChar).toBe('g')
+  })
+
   it('ignores presses after the round is finished', () => {
     const r = new Round(['a'])
     r.press('a', 0)

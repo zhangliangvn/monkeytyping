@@ -40,6 +40,16 @@ export class Round {
   /** Number of words cleared so far. */
   get cleared(): number { return this._cleared }
 
+  /** Caret position within the current word. */
+  get caretIndex(): number { return this.session.index }
+  /** The already-typed prefix of the current word. */
+  get typedPrefix(): string { return this.session.typed }
+  /** The next character to press (for the keyboard guide), or undefined. */
+  get nextChar(): string | undefined {
+    const w = this.currentWord
+    return w === undefined ? undefined : w[this.session.index]
+  }
+
   press(ch: string, nowMs: number): { correct: boolean; wordCompleted: boolean } {
     if (this.finished) return { correct: false, wordCompleted: false }
     if (this.startMs === null) this.startMs = nowMs
