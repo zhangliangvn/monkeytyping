@@ -44,7 +44,6 @@ export class PlayWord implements Scene {
   private wrongFlash = 0
   private hop = 0
   private monkeyX = 0
-  private roundsDone = 0
 
   constructor(private readonly opts: PlayOpts = {}) {}
 
@@ -68,8 +67,6 @@ export class PlayWord implements Scene {
           levelId: this.opts.levelId ?? 'practice-word',
           stars: out.stars, accuracy: out.accuracy, cleared: out.cleared,
         })
-        this.roundsDone += 1
-        this.round = new Round(makeDrill(STARTER_WORDS, this.total))
       }
     }
   }

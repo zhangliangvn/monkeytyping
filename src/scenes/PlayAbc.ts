@@ -45,7 +45,7 @@ export class PlayAbc implements Scene {
   private pulse = 0
   private wrongFlash = 0
   private monkeyBounce = 0
-  private roundsDone = 0
+  private readonly total = 24
 
   constructor(private readonly opts: PlayOpts = {}) {}
 
@@ -68,9 +68,6 @@ export class PlayAbc implements Scene {
         levelId: this.opts.levelId ?? 'practice-abc',
         stars: out.stars, accuracy: out.accuracy, cleared: out.cleared,
       })
-      this.roundsDone += 1
-      this.round = new Round(makeDrill(STARTER_KEYS, 24))
-      this.pawT = 0
     }
   }
 
@@ -114,7 +111,7 @@ export class PlayAbc implements Scene {
     const acc = Math.round(this.round.accuracy * 100)
     centeredText(ctx, `🎯 ${acc}%`, w * 0.1, h * 0.06, `600 ${Math.round(h * 0.03)}px 'Segoe UI'`, '#9ef0a0')
     centeredText(ctx, `🔥 ${this.round.comboCount}`, w * 0.9, h * 0.06, `600 ${Math.round(h * 0.03)}px 'Segoe UI'`, '#ffd166')
-    centeredText(ctx, `Vòng ${this.roundsDone + 1}`, w / 2, h * 0.06, `600 ${Math.round(h * 0.028)}px 'Segoe UI'`, withAlpha('#ffffff', 0.7))
+    centeredText(ctx, `${this.round.cleared}/${this.total}`, w / 2, h * 0.06, `600 ${Math.round(h * 0.028)}px 'Segoe UI'`, withAlpha('#ffffff', 0.7))
 
     // keyboard guide
     const kb = { x: w * 0.06, y: h * 0.56, w: w * 0.88, h: h * 0.38 }
