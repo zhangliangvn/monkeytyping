@@ -55,14 +55,19 @@ export class PlayWord implements Scene {
 
   handleChar(ch: string): void {
     if (this.round.finished) return
+    const idx = this.round.caretIndex
     const res = this.round.press(ch, this.timeMs)
     if (!res.correct) {
       this.wrongFlash = 1
+      this.opts.sfx?.keyWrong()
     } else {
       this.pawT = 0
+      this.opts.sfx?.keyOk(idx)
     }
     if (res.wordCompleted) {
       this.hop = 1
+      this.opts.sfx?.wordDone()
+      this.opts.sfx?.banana()
       if (this.round.finished) {
         const out = this.round.result(this.timeMs)
         this.opts.onRoundComplete?.({

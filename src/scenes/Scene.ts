@@ -16,6 +16,8 @@ export interface RoundOutcome {
   cleared: number
 }
 
+import type { Sfx } from '../audio/sfx'
+
 /** Options for the practice scenes (wired by the app shell). */
 export interface PlayOpts {
   onExit?: () => void
@@ -26,4 +28,5 @@ export interface PlayOpts {
   keys?: string[]
   words?: string[]
   title?: string
+  sfx?: Sfx
 }

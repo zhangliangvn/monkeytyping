@@ -5,10 +5,10 @@ import { t } from '../i18n/strings'
 import { characterById } from '../content/characters'
 import { fillRoundRect, centeredText, withAlpha } from '../render/draw'
 
-type Item = 'play' | 'level' | 'character' | 'scene' | 'lang'
+type Item = 'play' | 'level' | 'character' | 'scene' | 'sound' | 'lang'
 
 export class MenuScene implements Scene {
-  private items: Item[] = ['play', 'level', 'character', 'scene', 'lang']
+  private items: Item[] = ['play', 'level', 'character', 'scene', 'sound', 'lang']
   private sel = 0
   private timeMs = 0
 
@@ -26,6 +26,7 @@ export class MenuScene implements Scene {
     else if (item === 'level') this.ctx.go('level')
     else if (item === 'character') this.ctx.go('character')
     else if (item === 'scene') this.ctx.go('scene')
+    else if (item === 'sound') this.ctx.toggleMute()
     else {
       this.ctx.setLanguage(this.ctx.lang === 'vi' ? 'en' : 'vi')
       this.ctx.save()
@@ -46,11 +47,11 @@ export class MenuScene implements Scene {
 
     // banana + selected character
     const char = characterById(this.ctx.progress.state.selectedChar)
-    centeredText(ctx, `🍌 ${this.ctx.progress.bananas}`, w / 2, h * 0.45,
+    centeredText(ctx, `🍌 ${this.ctx.progress.bananas}`, w / 2, h * 0.43,
       `600 ${Math.round(h * 0.032)}px 'Segoe UI'`, '#ffe08a')
     if (char) {
-      centeredText(ctx, `${char.emoji} ${char.name[lang]}`, w / 2, h * 0.5,
-        `500 ${Math.round(h * 0.028)}px 'Segoe UI'`, withAlpha('#ffffff', 0.75))
+      centeredText(ctx, `${char.emoji} ${char.name[lang]}`, w / 2, h * 0.475,
+        `500 ${Math.round(h * 0.026)}px 'Segoe UI'`, withAlpha('#ffffff', 0.75))
     }
 
     // menu items
@@ -59,14 +60,15 @@ export class MenuScene implements Scene {
       level: t('menu_level', lang),
       character: t('menu_character', lang),
       scene: t('menu_scene', lang),
+      sound: this.ctx.isMuted() ? (lang === 'vi' ? '🔇 Tắt tiếng' : '🔇 Sound off') : (lang === 'vi' ? '🔊 Bật tiếng' : '🔊 Sound on'),
       lang: `🌐 ${lang === 'vi' ? 'Tiếng Việt' : 'English'}`,
     }
     const startY = h * 0.55
-    const gap = h * 0.082
+    const gap = h * 0.07
     this.items.forEach((item, i) => {
       const y = startY + i * gap
       const selected = i === this.sel
-      const bw = w * 0.32, bh = h * 0.062
+      const bw = w * 0.32, bh = h * 0.056
       const rect = { x: w / 2 - bw / 2, y: y - bh / 2, w: bw, h: bh }
       fillRoundRect(ctx, rect, 14, selected ? withAlpha('#ffd166', 0.22) : withAlpha('#ffffff', 0.06))
       if (selected) {

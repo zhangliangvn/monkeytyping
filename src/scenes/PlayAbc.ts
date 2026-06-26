@@ -60,9 +60,12 @@ export class PlayAbc implements Scene {
     const res = this.round.press(ch, this.timeMs)
     if (!res.correct) {
       this.wrongFlash = 1
+      this.opts.sfx?.keyWrong()
     } else {
       this.monkeyBounce = 1
       this.pawT = 0
+      this.opts.sfx?.keyOk(0)
+      this.opts.sfx?.banana()
     }
     if (res.wordCompleted && this.round.finished) {
       const out = this.round.result(this.timeMs)

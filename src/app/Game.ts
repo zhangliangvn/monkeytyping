@@ -19,6 +19,7 @@ import { PlayWord } from '../scenes/PlayWord'
 import { PlayAbc } from '../scenes/PlayAbc'
 import { levelById } from '../content/levels'
 import type { LevelDef } from '../content/types'
+import { Sfx } from '../audio/sfx'
 
 export type ScreenId = 'menu' | 'character' | 'scene' | 'level' | 'play' | 'results'
 
@@ -29,6 +30,8 @@ export interface GameCtx {
   startLevel(levelId: string): void
   save(): void
   setLanguage(l: Lang): void
+  toggleMute(): void
+  isMuted(): boolean
 }
 
 export class Game {
@@ -36,6 +39,7 @@ export class Game {
   private lang: Lang = 'vi'
   private playMode: 'abc' | 'word' = 'word'
   private screen: Scene
+  private sfx = new Sfx({ volume: 0.45 })
   private lastResult?: { round: RoundOutcome; reward: ResultOutcome }
   private currentLevel?: LevelDef
 
@@ -46,6 +50,8 @@ export class Game {
     startLevel: (id) => this.startLevel(id),
     save: () => saveProgress(this.progress),
     setLanguage: (l) => { this.lang = l; this.ctx.lang = l; setLang(l) },
+    toggleMute: () => { this.sfx.muted = !this.sfx.muted },
+    isMuted: () => this.sfx.muted,
   }
 
   constructor() {
@@ -75,12 +81,14 @@ export class Game {
     const lvl = this.currentLevel
     const base = {
       characterEmoji: this.selectedEmoji(),
+      sfx: this.sfx,
       onExit: () => this.go(lvl ? 'level' : 'menu'),
       onRoundComplete: (o: RoundOutcome) => {
         const reward = this.progress.recordResult(o.levelId, {
           stars: o.stars, accuracy: o.accuracy, cleared: o.cleared,
         })
         saveProgress(this.progress)
+        if (reward.newChars.length > 0 || reward.newScenes.length > 0) this.sfx.unlock()
         this.lastResult = { round: o, reward }
         this.go('results')
       },
