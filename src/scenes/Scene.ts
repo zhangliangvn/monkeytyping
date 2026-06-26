@@ -22,4 +22,8 @@ export interface PlayOpts {
   onRoundComplete?: (o: RoundOutcome) => void
   characterEmoji?: string
   levelId?: string
+  /** Override the drill content for a specific level. */
+  keys?: string[]
+  words?: string[]
+  title?: string
 }

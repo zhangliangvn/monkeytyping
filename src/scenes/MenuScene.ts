@@ -5,10 +5,10 @@ import { t } from '../i18n/strings'
 import { characterById } from '../content/characters'
 import { fillRoundRect, centeredText, withAlpha } from '../render/draw'
 
-type Item = 'play' | 'character' | 'lang'
+type Item = 'play' | 'level' | 'character' | 'scene' | 'lang'
 
 export class MenuScene implements Scene {
-  private items: Item[] = ['play', 'character', 'lang']
+  private items: Item[] = ['play', 'level', 'character', 'scene', 'lang']
   private sel = 0
   private timeMs = 0
 
@@ -23,7 +23,9 @@ export class MenuScene implements Scene {
   private activate(): void {
     const item = this.items[this.sel]!
     if (item === 'play') this.ctx.go('play')
+    else if (item === 'level') this.ctx.go('level')
     else if (item === 'character') this.ctx.go('character')
+    else if (item === 'scene') this.ctx.go('scene')
     else {
       this.ctx.setLanguage(this.ctx.lang === 'vi' ? 'en' : 'vi')
       this.ctx.save()
@@ -54,15 +56,17 @@ export class MenuScene implements Scene {
     // menu items
     const labels: Record<Item, string> = {
       play: t('menu_play', lang),
+      level: t('menu_level', lang),
       character: t('menu_character', lang),
+      scene: t('menu_scene', lang),
       lang: `🌐 ${lang === 'vi' ? 'Tiếng Việt' : 'English'}`,
     }
-    const startY = h * 0.58
-    const gap = h * 0.1
+    const startY = h * 0.55
+    const gap = h * 0.082
     this.items.forEach((item, i) => {
       const y = startY + i * gap
       const selected = i === this.sel
-      const bw = w * 0.32, bh = h * 0.075
+      const bw = w * 0.32, bh = h * 0.062
       const rect = { x: w / 2 - bw / 2, y: y - bh / 2, w: bw, h: bh }
       fillRoundRect(ctx, rect, 14, selected ? withAlpha('#ffd166', 0.22) : withAlpha('#ffffff', 0.06))
       if (selected) {

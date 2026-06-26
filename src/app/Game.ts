@@ -12,16 +12,21 @@ import { setLang } from '../i18n/strings'
 import { characterById } from '../content/characters'
 import { MenuScene } from '../scenes/MenuScene'
 import { CharacterSelectScene } from '../scenes/CharacterSelectScene'
+import { SceneSelectScene } from '../scenes/SceneSelectScene'
+import { LevelSelectScene } from '../scenes/LevelSelectScene'
 import { ResultsScene } from '../scenes/ResultsScene'
 import { PlayWord } from '../scenes/PlayWord'
 import { PlayAbc } from '../scenes/PlayAbc'
+import { levelById } from '../content/levels'
+import type { LevelDef } from '../content/types'
 
-export type ScreenId = 'menu' | 'character' | 'play' | 'results'
+export type ScreenId = 'menu' | 'character' | 'scene' | 'level' | 'play' | 'results'
 
 export interface GameCtx {
   progress: ProgressStore
   lang: Lang
   go(id: ScreenId): void
+  startLevel(levelId: string): void
   save(): void
   setLanguage(l: Lang): void
 }
@@ -32,11 +37,13 @@ export class Game {
   private playMode: 'abc' | 'word' = 'word'
   private screen: Scene
   private lastResult?: { round: RoundOutcome; reward: ResultOutcome }
+  private currentLevel?: LevelDef
 
   private readonly ctx: GameCtx = {
     progress: this.progress,
     lang: this.lang,
     go: (id) => this.go(id),
+    startLevel: (id) => this.startLevel(id),
     save: () => saveProgress(this.progress),
     setLanguage: (l) => { this.lang = l; this.ctx.lang = l; setLang(l) },
   }
@@ -51,17 +58,24 @@ export class Game {
   }
 
   go(id: ScreenId): void {
-    if (id === 'menu') this.screen = new MenuScene(this.ctx)
+    if (id === 'menu') { this.currentLevel = undefined; this.screen = new MenuScene(this.ctx) }
     else if (id === 'character') this.screen = new CharacterSelectScene(this.ctx)
+    else if (id === 'scene') this.screen = new SceneSelectScene(this.ctx)
+    else if (id === 'level') this.screen = new LevelSelectScene(this.ctx)
     else if (id === 'results' && this.lastResult) this.screen = new ResultsScene(this.ctx, this.lastResult)
     else this.screen = this.makePlay()
   }
 
+  private startLevel(levelId: string): void {
+    this.currentLevel = levelById(levelId)
+    this.go('play')
+  }
+
   private makePlay(): Scene {
-    const opts = {
+    const lvl = this.currentLevel
+    const base = {
       characterEmoji: this.selectedEmoji(),
-      levelId: `practice-${this.playMode}`,
-      onExit: () => this.go('menu'),
+      onExit: () => this.go(lvl ? 'level' : 'menu'),
       onRoundComplete: (o: RoundOutcome) => {
         const reward = this.progress.recordResult(o.levelId, {
           stars: o.stars, accuracy: o.accuracy, cleared: o.cleared,
@@ -71,6 +85,14 @@ export class Game {
         this.go('results')
       },
     }
+    if (lvl) {
+      const opts = {
+        ...base, levelId: lvl.id, title: lvl.title[this.lang],
+        keys: lvl.keySet, words: lvl.words?.[this.lang],
+      }
+      return lvl.mode === 'word' ? new PlayWord(opts) : new PlayAbc(opts)
+    }
+    const opts = { ...base, levelId: `practice-${this.playMode}` }
     return this.playMode === 'word' ? new PlayWord(opts) : new PlayAbc(opts)
   }
 

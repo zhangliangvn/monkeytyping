@@ -36,7 +36,7 @@ function makeDrill(words: string[], count: number): string[] {
 
 export class PlayWord implements Scene {
   private readonly total = 10
-  private round = new Round(makeDrill(STARTER_WORDS, this.total))
+  private round: Round
   private guide = new KeyboardGuide()
   private timeMs = 0
   private pawT = 0
@@ -45,7 +45,9 @@ export class PlayWord implements Scene {
   private hop = 0
   private monkeyX = 0
 
-  constructor(private readonly opts: PlayOpts = {}) {}
+  constructor(private readonly opts: PlayOpts = {}) {
+    this.round = new Round(makeDrill(opts.words ?? STARTER_WORDS, this.total))
+  }
 
   onKey(key: string): void {
     if (key === 'Escape') this.opts.onExit?.()

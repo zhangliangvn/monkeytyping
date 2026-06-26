@@ -38,16 +38,18 @@ function makeDrill(keys: string[], length: number): string[] {
 }
 
 export class PlayAbc implements Scene {
-  private round = new Round(makeDrill(STARTER_KEYS, 24))
+  private readonly total = 20
+  private round: Round
   private guide = new KeyboardGuide()
   private timeMs = 0
   private pawT = 0
   private pulse = 0
   private wrongFlash = 0
   private monkeyBounce = 0
-  private readonly total = 24
 
-  constructor(private readonly opts: PlayOpts = {}) {}
+  constructor(private readonly opts: PlayOpts = {}) {
+    this.round = new Round(makeDrill(opts.keys ?? STARTER_KEYS, this.total))
+  }
 
   onKey(key: string): void {
     if (key === 'Escape') this.opts.onExit?.()
