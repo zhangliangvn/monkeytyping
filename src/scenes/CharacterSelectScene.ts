@@ -8,7 +8,7 @@ import { t } from '../i18n/strings'
 import { fillRoundRect, centeredText, withAlpha } from '../render/draw'
 import { drawCharacterFace } from '../render/characterArt'
 
-const COLS = 5
+const COLS = 6
 
 export class CharacterSelectScene implements Scene {
   private sel = 0
@@ -48,10 +48,10 @@ export class CharacterSelectScene implements Scene {
     centeredText(ctx, `🍩 ${this.ctx.progress.bananas}`, w * 0.9, h * 0.06,
       `600 ${Math.round(h * 0.03)}px 'Segoe UI'`, '#ffe08a')
 
-    const gridX = w * 0.08, gridW = w * 0.84
-    const top = h * 0.2, rowH = h * 0.22
+    const gridX = w * 0.04, gridW = w * 0.92
+    const top = h * 0.19, rowH = h * 0.195
     const cellW = gridW / COLS
-    const cardW = cellW * 0.84, cardH = rowH * 0.82
+    const cardW = cellW * 0.88, cardH = rowH * 0.82
 
     CHARACTERS.forEach((c, i) => {
       const col = i % COLS, row = Math.floor(i / COLS)

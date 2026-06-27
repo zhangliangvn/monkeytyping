@@ -32,11 +32,23 @@ export function drawCute(ctx: CanvasRenderingContext2D, cx: number, cy: number, 
   ctx.lineJoin = 'round'
 
   if (s.ear === 'frog') { drawFrog(ctx, cx, cy, r, s, edge, lw); ctx.restore(); return }
+  if (s.kind === 'fish') { drawFish(ctx, cx, cy, r, s, edge, lw); ctx.restore(); return }
+  if (s.kind === 'snail') { drawSnail(ctx, cx, cy, r, s, edge, lw); ctx.restore(); return }
 
-  drawEars(ctx, cx, cy, r, s.ear, earColor, s.innerEar, edge, lw)
+  if (s.antlers) drawAntlers(ctx, cx, cy, r, s.antlers, lw)
+  drawEars(ctx, cx, cy, r, s.ear ?? 'none', earColor, s.innerEar, edge, lw)
 
   // head
   circle(ctx, cx, cy, r, s.face, edge, lw)
+  if (s.crest) drawCrest(ctx, cx, cy, r, s.crest, edge, lw)
+  if (s.spots) {
+    ctx.globalAlpha = 0.7
+    circle(ctx, cx - r * 0.18, cy - r * 0.42, r * 0.07, s.spots)
+    circle(ctx, cx + r * 0.22, cy - r * 0.38, r * 0.06, s.spots)
+    circle(ctx, cx + r * 0.46, cy + r * 0.05, r * 0.06, s.spots)
+    circle(ctx, cx - r * 0.48, cy + r * 0.02, r * 0.06, s.spots)
+    ctx.globalAlpha = 1
+  }
 
   // eye patches (panda)
   if (s.eyePatch) {
@@ -62,12 +74,21 @@ export function drawCute(ctx: CanvasRenderingContext2D, cx: number, cy: number, 
   // eyes
   const eyeY = cy - r * 0.02
   const eyeColor = '#34406b'
-  ell(ctx, cx - r * 0.3, eyeY, r * 0.11, r * 0.21, eyeColor)
-  ell(ctx, cx + r * 0.3, eyeY, r * 0.11, r * 0.21, eyeColor)
-  circle(ctx, cx - r * 0.27, eyeY - r * 0.08, r * 0.04, '#ffffff')
-  circle(ctx, cx + r * 0.33, eyeY - r * 0.08, r * 0.04, '#ffffff')
+  if (s.bigEyes) {
+    for (const sign of [-1, 1]) {
+      const ex = cx + sign * r * 0.34
+      circle(ctx, ex, eyeY, r * 0.27, '#ffffff', edge, lw * 0.7)
+      circle(ctx, ex, eyeY, r * 0.13, '#222')
+      circle(ctx, ex - sign * r * 0.04, eyeY - r * 0.05, r * 0.045, '#fff')
+    }
+  } else {
+    ell(ctx, cx - r * 0.3, eyeY, r * 0.11, r * 0.21, eyeColor)
+    ell(ctx, cx + r * 0.3, eyeY, r * 0.11, r * 0.21, eyeColor)
+    circle(ctx, cx - r * 0.27, eyeY - r * 0.08, r * 0.04, '#ffffff')
+    circle(ctx, cx + r * 0.33, eyeY - r * 0.08, r * 0.04, '#ffffff')
+  }
 
-  // nose / beak
+  // nose / beak / bill
   if (s.beak) {
     ctx.beginPath()
     ctx.moveTo(cx - r * 0.13, cy + r * 0.14)
@@ -77,6 +98,11 @@ export function drawCute(ctx: CanvasRenderingContext2D, cx: number, cy: number, 
     ctx.fillStyle = s.beak
     ctx.fill()
     mouthY = cy + r * 0.4
+  } else if (s.bill) {
+    ell(ctx, cx, cy + r * 0.2, r * 0.3, r * 0.14, s.bill, 0, edge, lw * 0.6)
+    ctx.strokeStyle = edge; ctx.lineWidth = lw * 0.5
+    ctx.beginPath(); ctx.moveTo(cx - r * 0.26, cy + r * 0.2); ctx.lineTo(cx + r * 0.26, cy + r * 0.2); ctx.stroke()
+    mouthY = cy + r * 0.5
   } else if (s.ear === 'pig') {
     // pig snout
     ell(ctx, cx, cy + r * 0.22, r * 0.22, r * 0.16, s.snout ?? '#ffd0e0', 0, edge, lw * 0.6)
@@ -89,7 +115,7 @@ export function drawCute(ctx: CanvasRenderingContext2D, cx: number, cy: number, 
   }
 
   // mouth
-  if (!s.beak) {
+  if (!s.beak && !s.bill) {
     ctx.strokeStyle = s.snout ? '#a9805e' : '#c894a8'
     ctx.lineWidth = Math.max(1, r * 0.035)
     ctx.lineCap = 'round'
@@ -157,10 +183,109 @@ function drawEars(
         ctx.fillStyle = color; ctx.fill(); ctx.lineWidth = lw; ctx.strokeStyle = edge; ctx.stroke()
       }
       break
+    case 'deer':
+      for (const sign of [-1, 1]) side(sign, () => {
+        ctx.translate(cx + sign * r * 0.6, cy - r * 0.5); ctx.rotate(sign * 0.7)
+        ell(ctx, 0, r * 0.42, r * 0.18, r * 0.5, color, 0, edge, lw)
+        if (inner) { ctx.globalAlpha = 0.6; ell(ctx, 0, r * 0.5, r * 0.09, r * 0.32, inner); ctx.globalAlpha = 1 }
+      })
+      break
     case 'none':
     case 'frog':
       break
   }
+}
+
+function drawAntlers(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, color: string, lw: number): void {
+  ctx.save()
+  ctx.strokeStyle = color
+  ctx.lineWidth = Math.max(2, lw * 1.6)
+  ctx.lineCap = 'round'
+  for (const sign of [-1, 1]) {
+    const bx = cx + sign * r * 0.32
+    ctx.beginPath()
+    ctx.moveTo(bx, cy - r * 0.78)
+    ctx.lineTo(bx + sign * r * 0.2, cy - r * 1.18)
+    ctx.moveTo(bx + sign * r * 0.08, cy - r * 0.94)
+    ctx.lineTo(bx + sign * r * 0.34, cy - r * 0.98)
+    ctx.moveTo(bx + sign * r * 0.14, cy - r * 1.04)
+    ctx.lineTo(bx - sign * r * 0.02, cy - r * 1.2)
+    ctx.stroke()
+  }
+  ctx.restore()
+}
+
+function drawCrest(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, color: string, edge: string, lw: number): void {
+  // three feather spikes fanning up from the top of the head
+  const tips = [-0.5, 0, 0.5]
+  for (const t of tips) {
+    ctx.save()
+    ctx.translate(cx, cy - r * 0.9)
+    ctx.rotate(t)
+    ell(ctx, 0, -r * 0.32, r * 0.12, r * 0.34, color, 0, edge, lw * 0.6)
+    ctx.restore()
+  }
+}
+
+function drawFish(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, s: CuteSpec, edge: string, lw: number): void {
+  // tail fin
+  ctx.beginPath()
+  ctx.moveTo(cx + r * 0.7, cy)
+  ctx.lineTo(cx + r * 1.25, cy - r * 0.45)
+  ctx.lineTo(cx + r * 1.15, cy)
+  ctx.lineTo(cx + r * 1.25, cy + r * 0.45)
+  ctx.closePath()
+  ctx.fillStyle = s.earColor ?? s.face
+  ctx.fill(); ctx.lineWidth = lw; ctx.strokeStyle = edge; ctx.stroke()
+  // body
+  ell(ctx, cx, cy, r * 1.05, r * 0.78, s.face, 0, edge, lw)
+  // top fin
+  ctx.beginPath()
+  ctx.moveTo(cx - r * 0.2, cy - r * 0.7)
+  ctx.quadraticCurveTo(cx, cy - r * 1.05, cx + r * 0.35, cy - r * 0.62)
+  ctx.closePath()
+  ctx.fillStyle = s.earColor ?? s.face; ctx.fill(); ctx.stroke()
+  // cheek
+  if (s.cheeks) { ctx.globalAlpha = 0.7; circle(ctx, cx - r * 0.45, cy + r * 0.2, r * 0.16, s.cheeks); ctx.globalAlpha = 1 }
+  // eye
+  circle(ctx, cx - r * 0.42, cy - r * 0.12, r * 0.16, '#ffffff', edge, lw * 0.6)
+  circle(ctx, cx - r * 0.42, cy - r * 0.12, r * 0.08, '#34406b')
+  circle(ctx, cx - r * 0.45, cy - r * 0.16, r * 0.03, '#fff')
+  // smile
+  ctx.strokeStyle = '#c894a8'; ctx.lineWidth = Math.max(1, r * 0.035); ctx.lineCap = 'round'
+  ctx.beginPath(); ctx.moveTo(cx - r * 0.6, cy + r * 0.28); ctx.quadraticCurveTo(cx - r * 0.45, cy + r * 0.42, cx - r * 0.25, cy + r * 0.3); ctx.stroke()
+  // bow accessory on top
+  if (s.accessory === 'bow') {
+    const col = s.accessoryColor ?? '#ff5a76'
+    const bx = cx, by = cy - r * 0.85
+    for (const sign of [-1, 1]) { ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx + sign * r * 0.3, by - r * 0.2); ctx.lineTo(bx + sign * r * 0.3, by + r * 0.2); ctx.closePath(); ctx.fillStyle = col; ctx.fill() }
+    circle(ctx, bx, by, r * 0.09, col)
+  }
+}
+
+function drawSnail(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, s: CuteSpec, edge: string, lw: number): void {
+  // body
+  ctx.beginPath()
+  ctx.moveTo(cx - r * 1.0, cy + r * 0.55)
+  ctx.quadraticCurveTo(cx - r * 1.15, cy + r * 0.05, cx - r * 0.62, cy - r * 0.05)
+  ctx.quadraticCurveTo(cx - r * 0.2, cy - r * 0.12, cx + r * 0.2, cy + r * 0.5)
+  ctx.closePath()
+  ctx.fillStyle = s.face; ctx.fill(); ctx.lineWidth = lw; ctx.strokeStyle = edge; ctx.stroke()
+  // eye stalks
+  ctx.strokeStyle = s.face; ctx.lineWidth = Math.max(2, r * 0.09); ctx.lineCap = 'round'
+  for (const sign of [-1, 1]) { ctx.beginPath(); ctx.moveTo(cx - r * 0.85 + sign * r * 0.1, cy - r * 0.02); ctx.lineTo(cx - r * 0.9 + sign * r * 0.16, cy - r * 0.5); ctx.stroke() }
+  for (const sign of [-1, 1]) { const ex = cx - r * 0.9 + sign * r * 0.16; circle(ctx, ex, cy - r * 0.52, r * 0.1, '#ffffff', edge, lw * 0.6); circle(ctx, ex, cy - r * 0.52, r * 0.05, '#222') }
+  // spiral shell
+  const shellColor = s.earColor ?? '#f0a86b'
+  circle(ctx, cx + r * 0.25, cy + r * 0.02, r * 0.85, shellColor, edge, lw)
+  ctx.strokeStyle = s.accessoryColor ?? '#c97b3a'; ctx.lineWidth = Math.max(1.5, r * 0.08); ctx.lineCap = 'round'
+  ctx.beginPath()
+  for (let a = 0; a < Math.PI * 4; a += 0.2) { const rad = r * 0.72 * (1 - a / (Math.PI * 4.5)); const x = cx + r * 0.25 + Math.cos(a) * rad; const y = cy + r * 0.02 + Math.sin(a) * rad; if (a === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y) }
+  ctx.stroke()
+  // cheek + smile on body
+  if (s.cheeks) { ctx.globalAlpha = 0.7; circle(ctx, cx - r * 0.72, cy + r * 0.28, r * 0.12, s.cheeks); ctx.globalAlpha = 1 }
+  ctx.strokeStyle = '#c894a8'; ctx.lineWidth = Math.max(1, r * 0.03)
+  ctx.beginPath(); ctx.moveTo(cx - r * 0.92, cy + r * 0.22); ctx.quadraticCurveTo(cx - r * 0.82, cy + r * 0.32, cx - r * 0.7, cy + r * 0.24); ctx.stroke()
 }
 
 function drawFrog(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, s: CuteSpec, edge: string, lw: number): void {

@@ -10,13 +10,13 @@ export type AbilityId =
   | 'hop' | 'splash' | 'dash' | 'dig' | 'hug' | 'glide' | 'roll'
 
 // ── Procedural "kawaii" art spec (drawn on canvas; see render/cuteFaces.ts) ──
-export type EarType = 'puppy' | 'bunny' | 'cat' | 'bear' | 'round' | 'fox' | 'pig' | 'none' | 'frog'
+export type EarType = 'puppy' | 'bunny' | 'cat' | 'bear' | 'round' | 'fox' | 'pig' | 'none' | 'frog' | 'deer'
 export type Accessory = 'curl' | 'bow' | 'beret' | 'horn' | 'flower' | 'crown' | 'leaf' | 'none'
 
 export interface CuteSpec {
   face: string
   edge?: string
-  ear: EarType
+  ear?: EarType
   earColor?: string
   innerEar?: string
   cheeks?: string
@@ -26,6 +26,18 @@ export interface CuteSpec {
   nose?: string
   beak?: string
   eyePatch?: string
+  /** A feather crest/tuft on top (birds). */
+  crest?: string
+  /** Big round owl eyes. */
+  bigEyes?: boolean
+  /** A wide flat duck bill (instead of a pointed beak). */
+  bill?: string
+  /** Antlers (deer). */
+  antlers?: string
+  /** Light spots on the face (fawn). */
+  spots?: string
+  /** Whole-body special creatures with their own drawer. */
+  kind?: 'fish' | 'snail'
 }
 
 export interface CharacterDef {

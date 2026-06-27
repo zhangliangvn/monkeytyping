@@ -5,6 +5,8 @@
 import { Loop } from './engine/loop'
 import { KeyboardInput } from './engine/input'
 import { Game } from './app/Game'
+import { preloadCharacterSprites } from './render/spriteLoader'
+import { CHARACTER_IDS } from './content/characters'
 
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement | null
 
@@ -24,6 +26,7 @@ function fit(c: HTMLCanvasElement, ctx: CanvasRenderingContext2D): { w: number; 
 function main(c: HTMLCanvasElement): void {
   const ctx = c.getContext('2d')
   if (!ctx) return
+  preloadCharacterSprites(CHARACTER_IDS)
   let size = fit(c, ctx)
   window.addEventListener('resize', () => { size = fit(c, ctx) })
 

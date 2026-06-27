@@ -111,6 +111,77 @@ export const CHARACTERS: CharacterDef[] = [
     emoji: '🐰', accent: '#6cc9a0',
     cute: { face: '#dff7ea', edge: '#a8d8c0', ear: 'bunny', earColor: '#dff7ea', innerEar: '#a0e0c0', accessory: 'leaf', accessoryColor: '#6cc070', cheeks: '#ffc2d6' },
   },
+  // ── More friends ──
+  {
+    id: 'bunny-noir', name: { vi: 'Thỏ Đen', en: 'Noir Bunny' },
+    ability: 'dash', abilityName: { vi: 'Lao nhanh', en: 'Dash' },
+    colors: ['#2b2b35', '#ff9ec0'], unlockCostBananas: 2800, world: 'desert',
+    emoji: '🐰', accent: '#b06fb0',
+    cute: { face: '#f2eef7', edge: '#cfc6dc', ear: 'bunny', earColor: '#2b2b35', innerEar: '#ff9ec0', accessory: 'bow', accessoryColor: '#ff5a9e', cheeks: '#ffc2d6' },
+  },
+  {
+    id: 'sparrow', name: { vi: 'Chim Sẻ', en: 'Sparrow' },
+    ability: 'glide', abilityName: { vi: 'Lượn', en: 'Glide' },
+    colors: ['#c79a6b', '#6b4226'], unlockCostBananas: 3200, world: 'jungle',
+    emoji: '🐦', accent: '#b0875a',
+    cute: { face: '#c79a6b', edge: '#9c7344', ear: 'none', beak: '#6b4226', cheeks: '#f0a07a' },
+  },
+  {
+    id: 'fish-bow', name: { vi: 'Cá Nơ', en: 'Ribbon Fish' },
+    ability: 'splash', abilityName: { vi: 'Bắn nước', en: 'Splash' },
+    colors: ['#ff9ec0', '#ff7e9e'], unlockCostBananas: 3600, world: 'ocean',
+    emoji: '🐠', accent: '#ff7e9e',
+    cute: { kind: 'fish', face: '#ff9ec0', edge: '#e06f96', earColor: '#ff7e9e', accessory: 'bow', accessoryColor: '#ff3d7a', cheeks: '#ffd0e0' },
+  },
+  {
+    id: 'sea-snail', name: { vi: 'Ốc Biển', en: 'Sea Snail' },
+    ability: 'roll', abilityName: { vi: 'Lăn tròn', en: 'Roll' },
+    colors: ['#9fe6e0', '#ffb35a'], unlockCostBananas: 4000, world: 'ocean',
+    emoji: '🐌', accent: '#4fd0d8',
+    cute: { kind: 'snail', face: '#9fe6e0', edge: '#5fc0b8', earColor: '#ffb35a', accessoryColor: '#d97b3a', cheeks: '#ffc2d6' },
+  },
+  {
+    id: 'parrot', name: { vi: 'Vẹt', en: 'Parrot' },
+    ability: 'glide', abilityName: { vi: 'Lượn', en: 'Glide' },
+    colors: ['#3ecf6a', '#ff5a5a'], unlockCostBananas: 4500, world: 'jungle',
+    emoji: '🦜', accent: '#2ecc71',
+    cute: { face: '#3ecf6a', edge: '#27a052', ear: 'none', crest: '#ff5a5a', beak: '#ffae3d', cheeks: '#ffd0a0' },
+  },
+  {
+    id: 'peacock', name: { vi: 'Công', en: 'Peacock' },
+    ability: 'sparkle', abilityName: { vi: 'Lấp lánh', en: 'Sparkle' },
+    colors: ['#2b6fd6', '#19c3c3'], unlockCostBananas: 5000, world: 'desert',
+    emoji: '🦚', accent: '#1e90ff',
+    cute: { face: '#2b6fd6', edge: '#1d52a8', ear: 'none', crest: '#19c3c3', beak: '#ffce5a', cheeks: '#9fc0ff' },
+  },
+  {
+    id: 'deer-sika', name: { vi: 'Hươu Sao', en: 'Sika Deer' },
+    ability: 'dash', abilityName: { vi: 'Lao nhanh', en: 'Dash' },
+    colors: ['#d8a96a', '#8a5a2b'], unlockCostBananas: 5600, world: 'jungle',
+    emoji: '🦌', accent: '#d2a679',
+    cute: { face: '#d8a96a', edge: '#b07d4f', ear: 'deer', earColor: '#d8a96a', innerEar: '#f0d8c0', antlers: '#8a5a2b', spots: '#fff3e0', snout: '#f3e2c8', nose: '#5d3720', cheeks: '#ffb38a' },
+  },
+  {
+    id: 'owl', name: { vi: 'Cú Mèo', en: 'Owl' },
+    ability: 'glide', abilityName: { vi: 'Lượn', en: 'Glide' },
+    colors: ['#bd9168', '#8a6440'], unlockCostBananas: 6200, world: 'jungle',
+    emoji: '🦉', accent: '#b07d4f',
+    cute: { face: '#bd9168', edge: '#8a6440', ear: 'cat', earColor: '#a87a4f', bigEyes: true, beak: '#ffae3d', cheeks: '#f0a07a' },
+  },
+  {
+    id: 'duck', name: { vi: 'Vịt', en: 'Duck' },
+    ability: 'splash', abilityName: { vi: 'Bắn nước', en: 'Splash' },
+    colors: ['#ffe45e', '#ff9e3d'], unlockCostBananas: 6800, world: 'ocean',
+    emoji: '🦆', accent: '#ffd54f',
+    cute: { face: '#ffe45e', edge: '#e8c23a', ear: 'none', bill: '#ff9e3d', cheeks: '#ffb84d' },
+  },
+  {
+    id: 'wolf', name: { vi: 'Chó Sói', en: 'Wolf' },
+    ability: 'dash', abilityName: { vi: 'Lao nhanh', en: 'Dash' },
+    colors: ['#9aa4ad', '#6f7a84'], unlockCostBananas: 7500, world: 'space',
+    emoji: '🐺', accent: '#8b96a0',
+    cute: { face: '#9aa4ad', edge: '#6f7a84', ear: 'fox', earColor: '#8b96a0', snout: '#cdd4da', nose: '#2b2b2b', cheeks: '#c0c8d0' },
+  },
 ]
 
 export const CHARACTER_IDS = CHARACTERS.map((c) => c.id)

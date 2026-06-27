@@ -6,9 +6,9 @@ import { fingerForChar } from './fingerMap'
 import { buildTelexTarget } from '../game/telex'
 
 describe('characters', () => {
-  it('has 14 with unique ids', () => {
-    expect(CHARACTERS).toHaveLength(14)
-    expect(new Set(CHARACTER_IDS).size).toBe(14)
+  it('has 24 with unique ids', () => {
+    expect(CHARACTERS).toHaveLength(24)
+    expect(new Set(CHARACTER_IDS).size).toBe(24)
   })
 
   it('the starter character is free and costs only rise from there', () => {
