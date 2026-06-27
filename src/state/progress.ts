@@ -26,11 +26,11 @@ export interface ResultOutcome { bananasEarned: number; newChars: string[]; newS
 export function defaultProgress(): ProgressState {
   return {
     totalBananas: 0,
-    unlockedChars: ['classic'],
+    unlockedChars: ['cinnamoroll'],
     unlockedScenes: ['jungle'],
     levelStars: {},
     keyConfidence: {},
-    selectedChar: 'classic',
+    selectedChar: 'cinnamoroll',
     selectedScene: 'jungle',
   }
 }

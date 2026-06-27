@@ -12,10 +12,10 @@ import type { CharacterDef } from './types'
 export const CHARACTERS: CharacterDef[] = [
   // ── Jungle 🌴 ──
   {
-    id: 'classic', name: { vi: 'Khỉ Cơ Bản', en: 'Classic Monkey' },
-    ability: 'banana-throw', abilityName: { vi: 'Ném chuối', en: 'Banana Throw' },
-    colors: ['#8b5e3c', '#a9744f', '#6b4226'], unlockCostBananas: 0, world: 'jungle',
-    emoji: '🐵', accent: '#c79a6b',
+    id: 'cinnamoroll', name: { vi: 'Cinnamoroll', en: 'Cinnamoroll' },
+    ability: 'fly', abilityName: { vi: 'Bay lượn', en: 'Fly' },
+    colors: ['#ffffff', '#bfe0ff', '#ffd6e6'], unlockCostBananas: 0, world: 'jungle',
+    emoji: '🐶', accent: '#7fb2ff',
   },
   {
     id: 'kitty', name: { vi: 'Khỉ Mèo', en: 'Kitty Monkey' },

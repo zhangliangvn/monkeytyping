@@ -22,7 +22,7 @@ import type { Sfx } from '../audio/sfx'
 export interface PlayOpts {
   onExit?: () => void
   onRoundComplete?: (o: RoundOutcome) => void
-  characterEmoji?: string
+  characterId?: string
   levelId?: string
   /** Override the drill content for a specific level. */
   keys?: string[]

@@ -9,7 +9,6 @@ import type { Lang } from '../content/types'
 import { ProgressStore, type ResultOutcome } from '../state/progress'
 import { loadProgress, saveProgress } from '../state/persistence'
 import { setLang } from '../i18n/strings'
-import { characterById } from '../content/characters'
 import { MenuScene } from '../scenes/MenuScene'
 import { CharacterSelectScene } from '../scenes/CharacterSelectScene'
 import { SceneSelectScene } from '../scenes/SceneSelectScene'
@@ -59,10 +58,6 @@ export class Game {
     this.screen = new MenuScene(this.ctx)
   }
 
-  private selectedEmoji(): string {
-    return characterById(this.progress.state.selectedChar)?.emoji ?? '🐵'
-  }
-
   go(id: ScreenId): void {
     if (id === 'menu') { this.currentLevel = undefined; this.screen = new MenuScene(this.ctx) }
     else if (id === 'character') this.screen = new CharacterSelectScene(this.ctx)
@@ -80,7 +75,7 @@ export class Game {
   private makePlay(): Scene {
     const lvl = this.currentLevel
     const base = {
-      characterEmoji: this.selectedEmoji(),
+      characterId: this.progress.state.selectedChar,
       sfx: this.sfx,
       onExit: () => this.go(lvl ? 'level' : 'menu'),
       onRoundComplete: (o: RoundOutcome) => {

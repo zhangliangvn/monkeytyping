@@ -49,12 +49,33 @@ export class KeyboardGuide {
     const map = layoutKeyboard(inner)
     const next = normalize(state.nextChar)
 
-    for (const [label, rect] of map) this.drawKey(ctx, label, rect, next, state, inner)
+    for (const [label, rect] of map) this.drawKeyBody(ctx, label, rect, next, state, inner)
     this.drawGHDivider(ctx, map)
     if (state.showPaws) this.drawPaws(ctx, map, next, state)
+    // Labels render LAST so the monkey paws never cover the key letters.
+    for (const [label, rect] of map) this.drawKeyLabel(ctx, label, rect, next === label)
   }
 
-  private drawKey(
+  private drawKeyLabel(
+    ctx: CanvasRenderingContext2D, label: string, rect: Rect, isNext: boolean,
+  ): void {
+    const fontPx = Math.round(Math.min(rect.h * 0.42, rect.w * 0.5))
+    const text = label.length === 1 ? label.toUpperCase() : shortLabel(label)
+    if (isNext) {
+      // a soft dark halo keeps the letter legible even over a bright paw tip
+      ctx.save()
+      ctx.shadowColor = 'rgba(0,0,0,0.85)'
+      ctx.shadowBlur = fontPx * 0.5
+      centeredText(ctx, text, rect.x + rect.w / 2, rect.y + rect.h * 0.42,
+        `700 ${fontPx}px 'Segoe UI', sans-serif`, '#ffffff')
+      ctx.restore()
+    } else {
+      centeredText(ctx, text, rect.x + rect.w / 2, rect.y + rect.h * 0.42,
+        `600 ${fontPx}px 'Segoe UI', sans-serif`, LABEL)
+    }
+  }
+
+  private drawKeyBody(
     ctx: CanvasRenderingContext2D, label: string, rect: Rect,
     next: string | undefined, state: GuideState, inner: Rect,
   ): void {
@@ -101,14 +122,6 @@ export class KeyboardGuide {
         withAlpha(LABEL, 0.9),
       )
     }
-
-    // label
-    const fontPx = Math.round(Math.min(rect.h * 0.42, rect.w * 0.5))
-    const text = label.length === 1 ? label.toUpperCase() : shortLabel(label)
-    centeredText(
-      ctx, text, rect.x + rect.w / 2, rect.y + rect.h * 0.42,
-      `600 ${fontPx}px 'Segoe UI', sans-serif`, isNext ? '#ffffff' : LABEL,
-    )
   }
 
   private drawGHDivider(ctx: CanvasRenderingContext2D, map: Map<string, Rect>): void {

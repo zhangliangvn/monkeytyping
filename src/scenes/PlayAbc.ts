@@ -8,8 +8,10 @@
 import type { Scene, PlayOpts } from './Scene'
 import { Round } from '../game/round'
 import { fingerForChar, type Finger } from '../content/fingerMap'
+import { characterById } from '../content/characters'
 import { KeyboardGuide, type GuideState } from '../keyboard/KeyboardGuide'
 import { centeredText, withAlpha } from '../render/draw'
+import { drawCharacterFace } from '../render/characterArt'
 
 const FINGER_VI: Record<Finger, string> = {
   'L-pinky': 'ngón út trái',
@@ -97,7 +99,7 @@ export class PlayAbc implements Scene {
 
     // monkey mascot
     const bounce = Math.sin(this.monkeyBounce * Math.PI) * h * 0.02
-    centeredText(ctx, this.opts.characterEmoji ?? '🐵', w / 2, h * 0.16 - bounce, `${Math.round(h * 0.12)}px serif`, '#fff')
+    drawCharacterFace(ctx, characterById(this.opts.characterId ?? ''), w / 2, h * 0.16 - bounce, h * 0.12)
 
     // big target letter
     if (next && def) {

@@ -3,9 +3,9 @@ import { ProgressStore, defaultProgress, bananasFor } from './progress'
 import { LEVELS } from '../content/levels'
 
 describe('progress: rewards & unlocks', () => {
-  it('starts with only classic + jungle', () => {
+  it('starts with only cinnamoroll + jungle', () => {
     const p = new ProgressStore()
-    expect(p.isCharUnlocked('classic')).toBe(true)
+    expect(p.isCharUnlocked('cinnamoroll')).toBe(true)
     expect(p.isCharUnlocked('kitty')).toBe(false)
     expect(p.isSceneUnlocked('jungle')).toBe(true)
     expect(p.isSceneUnlocked('desert')).toBe(false)
@@ -50,7 +50,7 @@ describe('progress: rewards & unlocks', () => {
     const p = new ProgressStore()
     expect(p.selectChar('hulk')).toBe(false)
     expect(p.selectScene('space')).toBe(false)
-    expect(p.selectChar('classic')).toBe(true)
+    expect(p.selectChar('cinnamoroll')).toBe(true)
   })
 
   it('updates per-key confidence toward 1 on correct, 0 on wrong', () => {

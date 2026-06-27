@@ -9,8 +9,10 @@
 import type { Scene, PlayOpts } from './Scene'
 import { Round } from '../game/round'
 import { fingerForChar, type Finger } from '../content/fingerMap'
+import { characterById } from '../content/characters'
 import { KeyboardGuide, type GuideState } from '../keyboard/KeyboardGuide'
 import { centeredText, withAlpha } from '../render/draw'
+import { drawCharacterFace } from '../render/characterArt'
 
 const FINGER_VI: Record<Finger, string> = {
   'L-pinky': 'ngón út trái', 'L-ring': 'ngón áp út trái', 'L-middle': 'ngón giữa trái',
@@ -104,7 +106,7 @@ export class PlayWord implements Scene {
     ctx.beginPath(); ctx.moveTo(x0, trackY); ctx.lineTo(x1, trackY); ctx.stroke()
     const mx = x0 + (x1 - x0) * this.monkeyX
     const hopY = Math.sin(this.hop * Math.PI) * h * 0.04
-    centeredText(ctx, this.opts.characterEmoji ?? '🐵', mx, trackY - h * 0.03 - hopY, `${Math.round(h * 0.07)}px serif`, '#fff')
+    drawCharacterFace(ctx, characterById(this.opts.characterId ?? ''), mx, trackY - h * 0.03 - hopY, h * 0.075)
     centeredText(ctx, '🏁', x1, trackY - h * 0.03, `${Math.round(h * 0.05)}px serif`, '#fff')
 
     // current word with per-char caret coloring

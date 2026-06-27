@@ -6,7 +6,7 @@ export type SceneId = 'jungle' | 'desert' | 'ocean' | 'space'
 export type AbilityId =
   | 'banana-throw' | 'shuriken' | 'cannon' | 'rocket' | 'laser' | 'smash'
   | 'web' | 'repulsor' | 'sparkle' | 'fireworks' | 'bubble' | 'spin'
-  | 'pounce' | 'freeze'
+  | 'pounce' | 'freeze' | 'fly'
 
 export interface CharacterDef {
   id: string

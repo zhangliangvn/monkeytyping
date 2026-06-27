@@ -4,6 +4,7 @@ import type { GameCtx } from '../app/Game'
 import { t } from '../i18n/strings'
 import { characterById } from '../content/characters'
 import { fillRoundRect, centeredText, withAlpha } from '../render/draw'
+import { drawCharacterFace } from '../render/characterArt'
 
 type Item = 'play' | 'level' | 'character' | 'scene' | 'sound' | 'lang'
 
@@ -41,12 +42,12 @@ export class MenuScene implements Scene {
     ctx.fillStyle = grad; ctx.fillRect(0, 0, w, h)
 
     const lang = this.ctx.lang
+    const char = characterById(this.ctx.progress.state.selectedChar)
     const bob = Math.sin(this.timeMs / 500) * h * 0.012
-    centeredText(ctx, '🐵', w / 2, h * 0.2 + bob, `${Math.round(h * 0.16)}px serif`, '#fff')
+    drawCharacterFace(ctx, char, w / 2, h * 0.2 + bob, h * 0.18)
     centeredText(ctx, t('app_title', lang), w / 2, h * 0.36, `800 ${Math.round(h * 0.07)}px 'Segoe UI', sans-serif`, '#ffd166')
 
     // banana + selected character
-    const char = characterById(this.ctx.progress.state.selectedChar)
     centeredText(ctx, `🍌 ${this.ctx.progress.bananas}`, w / 2, h * 0.43,
       `600 ${Math.round(h * 0.032)}px 'Segoe UI'`, '#ffe08a')
     if (char) {

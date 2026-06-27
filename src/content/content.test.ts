@@ -10,8 +10,8 @@ describe('characters', () => {
     expect(new Set(CHARACTER_IDS).size).toBe(14)
   })
 
-  it('classic is free and costs only rise from there', () => {
-    expect(characterById('classic')!.unlockCostBananas).toBe(0)
+  it('the starter character is free and costs only rise from there', () => {
+    expect(characterById('cinnamoroll')!.unlockCostBananas).toBe(0)
     const costs = CHARACTERS.map((c) => c.unlockCostBananas)
     for (let i = 1; i < costs.length; i++) {
       expect(costs[i]!).toBeGreaterThan(costs[i - 1]!)

@@ -6,6 +6,7 @@ import type { GameCtx } from '../app/Game'
 import { CHARACTERS } from '../content/characters'
 import { t } from '../i18n/strings'
 import { fillRoundRect, centeredText, withAlpha } from '../render/draw'
+import { drawCharacterFace } from '../render/characterArt'
 
 const COLS = 5
 
@@ -70,9 +71,12 @@ export class CharacterSelectScene implements Scene {
         ctx.strokeRect(rect.x, rect.y, rect.w, rect.h); ctx.restore()
       }
 
-      const emoji = unlocked ? c.emoji : '❔'
-      centeredText(ctx, emoji, cx, cy - cardH * 0.12, `${Math.round(cardH * 0.42)}px serif`,
-        unlocked ? '#fff' : withAlpha('#ffffff', 0.5))
+      if (unlocked) {
+        drawCharacterFace(ctx, c, cx, cy - cardH * 0.1, cardH * 0.44)
+      } else {
+        centeredText(ctx, '❔', cx, cy - cardH * 0.12, `${Math.round(cardH * 0.42)}px serif`,
+          withAlpha('#ffffff', 0.5))
+      }
       const nameColor = unlocked ? '#fff' : withAlpha('#ffffff', 0.5)
       centeredText(ctx, unlocked ? c.name[lang] : `🔒 ${c.unlockCostBananas}🍌`,
         cx, cy + cardH * 0.32, `600 ${Math.round(cardH * 0.16)}px 'Segoe UI'`, nameColor)
