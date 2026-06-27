@@ -18,11 +18,12 @@ import { PlayWord } from '../scenes/PlayWord'
 import { PlayAbc } from '../scenes/PlayAbc'
 import { PlayTelex } from '../scenes/PlayTelex'
 import { PlayArcade } from '../scenes/PlayArcade'
+import { PlayShark } from '../scenes/PlayShark'
 import { levelById } from '../content/levels'
 import type { LevelDef } from '../content/types'
 import { Sfx } from '../audio/sfx'
 
-export type ScreenId = 'menu' | 'character' | 'scene' | 'level' | 'play' | 'arcade' | 'results'
+export type ScreenId = 'menu' | 'character' | 'scene' | 'level' | 'play' | 'arcade' | 'shark' | 'results'
 
 export interface GameCtx {
   progress: ProgressStore
@@ -66,6 +67,7 @@ export class Game {
     else if (id === 'scene') this.screen = new SceneSelectScene(this.ctx)
     else if (id === 'level') this.screen = new LevelSelectScene(this.ctx)
     else if (id === 'arcade') this.screen = this.makeArcade()
+    else if (id === 'shark') this.screen = this.makeShark()
     else if (id === 'results' && this.lastResult) this.screen = new ResultsScene(this.ctx, this.lastResult)
     else this.screen = this.makePlay()
   }
@@ -90,6 +92,16 @@ export class Game {
       characterId: this.progress.state.selectedChar,
       sfx: this.sfx,
       levelId: 'arcade',
+      onExit: () => this.go('menu'),
+      onRoundComplete: (o) => this.onRoundComplete(o),
+    })
+  }
+
+  private makeShark(): Scene {
+    return new PlayShark({
+      characterId: this.progress.state.selectedChar,
+      sfx: this.sfx,
+      levelId: 'shark',
       onExit: () => this.go('menu'),
       onRoundComplete: (o) => this.onRoundComplete(o),
     })

@@ -6,7 +6,7 @@
 import type { Lang } from '../content/types'
 
 type Key =
-  | 'app_title' | 'menu_play' | 'menu_arcade' | 'menu_character' | 'menu_scene' | 'menu_level'
+  | 'app_title' | 'menu_play' | 'menu_arcade' | 'menu_shark' | 'menu_character' | 'menu_scene' | 'menu_level'
   | 'menu_settings' | 'menu_back' | 'select_character' | 'select_scene' | 'select_level'
   | 'locked' | 'bananas' | 'accuracy' | 'combo' | 'words' | 'round'
   | 'mode_abc' | 'mode_word' | 'switch_mode' | 'nav_hint' | 'play_hint'
@@ -16,6 +16,7 @@ const STRINGS: Record<Key, Record<Lang, string>> = {
   app_title: { vi: 'Khỉ Tập Gõ', en: 'Monkey Typing' },
   menu_play: { vi: '▶ Chơi', en: '▶ Play' },
   menu_arcade: { vi: '🚀 Bắn chữ', en: '🚀 Arcade' },
+  menu_shark: { vi: '🦈 Cá mập', en: '🦈 Shark' },
   menu_character: { vi: '🐵 Nhân vật', en: '🐵 Character' },
   menu_scene: { vi: '🌴 Cảnh', en: '🌴 Scene' },
   menu_level: { vi: '🎯 Chọn Level', en: '🎯 Level Select' },
