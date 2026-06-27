@@ -1,4 +1,4 @@
-# 🐒 Khỉ Tập Gõ — Monkey Typing
+# 🐶 Cinnamoroll Tập Gõ — Cinnamoroll Typing
 
 Game dạy **gõ bàn phím 10 ngón** cho trẻ em, bằng **Tiếng Việt + English**. Điểm khác biệt
 lớn nhất so với các game khác: **dạy ngón nào đặt phím nào** — bàn phím ảo tô màu theo ngón,
@@ -52,7 +52,7 @@ Mọi nội dung là **dữ liệu**, nằm trong [`src/content/`](src/content/)
 không phải đụng vào "máy game".
 
 - **Thêm nhân vật** → [`src/content/characters.ts`](src/content/characters.ts): copy một mục, đổi
-  `id`, tên, `ability`, màu, `unlockCostBananas` (giá chuối), `world` (cảnh), và `emoji`.
+  `id`, tên, `ability`, màu, `unlockCostBananas` (giá donut 🍩), `world` (cảnh), và `emoji`.
 - **Thêm/sửa cảnh** → [`src/content/scenes.ts`](src/content/scenes.ts).
 - **Thêm/sửa level & bộ từ** → [`src/content/levels.ts`](src/content/levels.ts). Từ trong level chỉ
   nên dùng các phím đã dạy (có bài test tự kiểm tra điều này).

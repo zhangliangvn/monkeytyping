@@ -22,7 +22,8 @@ export class ResultsScene implements Scene {
     if (key === 'ArrowUp' || key === 'ArrowDown') this.sel = (this.sel + 1) % this.items.length
     else if (key === 'Escape') this.ctx.go('menu')
     else if (key === 'Enter') {
-      this.ctx.go(this.items[this.sel] === 'retry' ? 'play' : 'menu')
+      if (this.items[this.sel] === 'retry') this.ctx.go('play')
+      else this.ctx.continueNext()
     }
   }
 
@@ -50,7 +51,7 @@ export class ResultsScene implements Scene {
 
     centeredText(ctx, `🎯 ${t('accuracy', lang)}: ${Math.round(round.accuracy * 100)}%`, w / 2, h * 0.42,
       `600 ${Math.round(h * 0.04)}px 'Segoe UI'`, '#9ef0a0')
-    centeredText(ctx, `🍌 +${reward.bananasEarned}`, w / 2, h * 0.5,
+    centeredText(ctx, `🍩 +${reward.bananasEarned}`, w / 2, h * 0.5,
       `700 ${Math.round(h * 0.045)}px 'Segoe UI'`, '#ffe08a')
 
     // unlock celebration

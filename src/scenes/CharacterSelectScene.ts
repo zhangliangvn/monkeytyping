@@ -45,7 +45,7 @@ export class CharacterSelectScene implements Scene {
 
     centeredText(ctx, t('select_character', lang), w / 2, h * 0.1,
       `800 ${Math.round(h * 0.05)}px 'Segoe UI'`, '#ffd166')
-    centeredText(ctx, `🍌 ${this.ctx.progress.bananas}`, w * 0.9, h * 0.06,
+    centeredText(ctx, `🍩 ${this.ctx.progress.bananas}`, w * 0.9, h * 0.06,
       `600 ${Math.round(h * 0.03)}px 'Segoe UI'`, '#ffe08a')
 
     const gridX = w * 0.08, gridW = w * 0.84
@@ -78,7 +78,7 @@ export class CharacterSelectScene implements Scene {
           withAlpha('#ffffff', 0.5))
       }
       const nameColor = unlocked ? '#fff' : withAlpha('#ffffff', 0.5)
-      centeredText(ctx, unlocked ? c.name[lang] : `🔒 ${c.unlockCostBananas}🍌`,
+      centeredText(ctx, unlocked ? c.name[lang] : `🔒 ${c.unlockCostBananas}🍩`,
         cx, cy + cardH * 0.32, `600 ${Math.round(cardH * 0.16)}px 'Segoe UI'`, nameColor)
       if (isCurrent) {
         centeredText(ctx, '✓', rect.x + rect.w - cardW * 0.12, rect.y + cardH * 0.16,

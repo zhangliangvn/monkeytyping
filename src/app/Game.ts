@@ -19,7 +19,7 @@ import { PlayAbc } from '../scenes/PlayAbc'
 import { PlayTelex } from '../scenes/PlayTelex'
 import { PlayArcade } from '../scenes/PlayArcade'
 import { PlayShark } from '../scenes/PlayShark'
-import { levelById } from '../content/levels'
+import { levelById, nextLevelId, LEVELS } from '../content/levels'
 import type { LevelDef } from '../content/types'
 import { Sfx } from '../audio/sfx'
 
@@ -30,6 +30,8 @@ export interface GameCtx {
   lang: Lang
   go(id: ScreenId): void
   startLevel(levelId: string): void
+  /** Continue the campaign after a results screen (advance to the next level, or menu). */
+  continueNext(): void
   save(): void
   setLanguage(l: Lang): void
   toggleMute(): void
@@ -39,7 +41,6 @@ export interface GameCtx {
 export class Game {
   private progress: ProgressStore = loadProgress()
   private lang: Lang = 'vi'
-  private playMode: 'abc' | 'word' = 'word'
   private screen: Scene
   private sfx = new Sfx({ volume: 0.45 })
   private lastResult?: { round: RoundOutcome; reward: ResultOutcome }
@@ -50,6 +51,7 @@ export class Game {
     lang: this.lang,
     go: (id) => this.go(id),
     startLevel: (id) => this.startLevel(id),
+    continueNext: () => this.continueNext(),
     save: () => saveProgress(this.progress),
     setLanguage: (l) => { this.lang = l; this.ctx.lang = l; setLang(l) },
     toggleMute: () => { this.sfx.muted = !this.sfx.muted },
@@ -69,7 +71,27 @@ export class Game {
     else if (id === 'arcade') this.screen = this.makeArcade()
     else if (id === 'shark') this.screen = this.makeShark()
     else if (id === 'results' && this.lastResult) this.screen = new ResultsScene(this.ctx, this.lastResult)
-    else this.screen = this.makePlay()
+    else {
+      // "Play" with no chosen level = continue the campaign at the next un-passed level.
+      if (!this.currentLevel) this.currentLevel = this.nextCampaignLevel()
+      this.screen = this.makePlay()
+    }
+  }
+
+  /** The first level the player hasn't passed yet (≥1 star), or the last level. */
+  private nextCampaignLevel(): LevelDef {
+    return LEVELS.find((l) => this.progress.starsFor(l.id) === 0) ?? LEVELS[LEVELS.length - 1]!
+  }
+
+  /** After a results screen: advance to the next level if this one was passed, else menu. */
+  private continueNext(): void {
+    const lvl = this.currentLevel
+    const passed = (this.lastResult?.round.stars ?? 0) >= 1
+    if (lvl && passed) {
+      const nid = nextLevelId(lvl.id)
+      if (nid) { this.currentLevel = levelById(nid); this.go('play'); return }
+    }
+    this.go('menu')
   }
 
   private startLevel(levelId: string): void {
@@ -108,34 +130,23 @@ export class Game {
   }
 
   private makePlay(): Scene {
-    const lvl = this.currentLevel
+    const lvl = this.currentLevel ?? this.nextCampaignLevel()
+    this.currentLevel = lvl
     const base = {
       characterId: this.progress.state.selectedChar,
       sfx: this.sfx,
-      onExit: () => this.go(lvl ? 'level' : 'menu'),
+      onExit: () => this.go('level'),
       onRoundComplete: (o: RoundOutcome) => this.onRoundComplete(o),
     }
-    if (lvl) {
-      const words = lvl.mode === 'telex' ? lvl.words?.vi : lvl.words?.[this.lang]
-      const opts = { ...base, levelId: lvl.id, title: lvl.title[this.lang], keys: lvl.keySet, words }
-      if (lvl.mode === 'telex') return new PlayTelex(opts)
-      return lvl.mode === 'word' ? new PlayWord(opts) : new PlayAbc(opts)
-    }
-    const opts = { ...base, levelId: `practice-${this.playMode}` }
-    return this.playMode === 'word' ? new PlayWord(opts) : new PlayAbc(opts)
+    const words = lvl.mode === 'telex' ? lvl.words?.vi : lvl.words?.[this.lang]
+    const opts = { ...base, levelId: lvl.id, title: lvl.title[this.lang], keys: lvl.keySet, words }
+    if (lvl.mode === 'telex') return new PlayTelex(opts)
+    return lvl.mode === 'word' ? new PlayWord(opts) : new PlayAbc(opts)
   }
 
   onChar(ch: string): void { this.screen.handleChar?.(ch) }
 
-  onKey(key: string): void {
-    // Tab toggles ABC/Word while playing.
-    if (key === 'Tab' && (this.screen instanceof PlayWord || this.screen instanceof PlayAbc)) {
-      this.playMode = this.playMode === 'word' ? 'abc' : 'word'
-      this.screen = this.makePlay()
-      return
-    }
-    this.screen.onKey?.(key)
-  }
+  onKey(key: string): void { this.screen.onKey?.(key) }
 
   update(dt: number): void { this.screen.update(dt) }
   render(ctx: CanvasRenderingContext2D, w: number, h: number): void { this.screen.render(ctx, w, h) }

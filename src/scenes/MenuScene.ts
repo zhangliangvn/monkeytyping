@@ -50,7 +50,7 @@ export class MenuScene implements Scene {
     centeredText(ctx, t('app_title', lang), w / 2, h * 0.245, `800 ${Math.round(h * 0.055)}px 'Segoe UI', sans-serif`, '#ffd166')
 
     // banana + selected character
-    centeredText(ctx, `🍌 ${this.ctx.progress.bananas}`, w / 2, h * 0.305,
+    centeredText(ctx, `🍩 ${this.ctx.progress.bananas}`, w / 2, h * 0.305,
       `600 ${Math.round(h * 0.028)}px 'Segoe UI'`, '#ffe08a')
     if (char) {
       centeredText(ctx, `${char.emoji} ${char.name[lang]}`, w / 2, h * 0.345,

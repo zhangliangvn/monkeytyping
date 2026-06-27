@@ -13,7 +13,7 @@ type Key =
   | 'level_complete' | 'try_again' | 'continue' | 'new_unlock'
 
 const STRINGS: Record<Key, Record<Lang, string>> = {
-  app_title: { vi: 'Khỉ Tập Gõ', en: 'Monkey Typing' },
+  app_title: { vi: 'Cinnamoroll Tập Gõ', en: 'Cinnamoroll Typing' },
   menu_play: { vi: '▶ Chơi', en: '▶ Play' },
   menu_arcade: { vi: '🚀 Bắn chữ', en: '🚀 Arcade' },
   menu_shark: { vi: '🦈 Cá mập', en: '🦈 Shark' },
@@ -26,7 +26,7 @@ const STRINGS: Record<Key, Record<Lang, string>> = {
   select_scene: { vi: 'Chọn Cảnh', en: 'Choose Your Scene' },
   select_level: { vi: 'Chọn Level', en: 'Choose Level' },
   locked: { vi: 'Khóa', en: 'Locked' },
-  bananas: { vi: 'Chuối', en: 'Bananas' },
+  bananas: { vi: 'Donut', en: 'Donuts' },
   accuracy: { vi: 'Chính xác', en: 'Accuracy' },
   combo: { vi: 'Combo', en: 'Combo' },
   words: { vi: 'Từ', en: 'Words' },
