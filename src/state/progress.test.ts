@@ -6,7 +6,7 @@ describe('progress: rewards & unlocks', () => {
   it('starts with only cinnamoroll + jungle', () => {
     const p = new ProgressStore()
     expect(p.isCharUnlocked('cinnamoroll')).toBe(true)
-    expect(p.isCharUnlocked('kitty')).toBe(false)
+    expect(p.isCharUnlocked('bunny-pink')).toBe(false)
     expect(p.isSceneUnlocked('jungle')).toBe(true)
     expect(p.isSceneUnlocked('desert')).toBe(false)
   })
@@ -21,17 +21,17 @@ describe('progress: rewards & unlocks', () => {
 
   it('unlocks characters by cumulative bananas and never deducts', () => {
     const p = new ProgressStore()
-    // kitty costs 40 cumulative bananas
+    // bunny-pink costs 40 cumulative bananas
     const before = p.bananas
     const r = p.recordResult('l1', { stars: 3, accuracy: 1, cleared: 6 }) // 6*5*1.5 + 30 = 75
     expect(r.bananasEarned).toBe(bananasFor({ stars: 3, accuracy: 1, cleared: 6 }))
     expect(p.bananas).toBe(before + r.bananasEarned)
     expect(p.bananas).toBeGreaterThanOrEqual(40)
-    expect(r.newChars).toContain('kitty')
-    expect(p.isCharUnlocked('kitty')).toBe(true)
+    expect(r.newChars).toContain('bunny-pink')
+    expect(p.isCharUnlocked('bunny-pink')).toBe(true)
     // bananas are NOT spent on unlock
     const after = p.bananas
-    p.selectChar('kitty')
+    p.selectChar('bunny-pink')
     expect(p.bananas).toBe(after)
   })
 
@@ -48,7 +48,7 @@ describe('progress: rewards & unlocks', () => {
 
   it('refuses to select a locked character or scene', () => {
     const p = new ProgressStore()
-    expect(p.selectChar('hulk')).toBe(false)
+    expect(p.selectChar('pup-brown')).toBe(false)
     expect(p.selectScene('space')).toBe(false)
     expect(p.selectChar('cinnamoroll')).toBe(true)
   })

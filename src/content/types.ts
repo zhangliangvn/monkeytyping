@@ -7,6 +7,26 @@ export type AbilityId =
   | 'banana-throw' | 'shuriken' | 'cannon' | 'rocket' | 'laser' | 'smash'
   | 'web' | 'repulsor' | 'sparkle' | 'fireworks' | 'bubble' | 'spin'
   | 'pounce' | 'freeze' | 'fly'
+  | 'hop' | 'splash' | 'dash' | 'dig' | 'hug' | 'glide' | 'roll'
+
+// ── Procedural "kawaii" art spec (drawn on canvas; see render/cuteFaces.ts) ──
+export type EarType = 'puppy' | 'bunny' | 'cat' | 'bear' | 'round' | 'fox' | 'pig' | 'none' | 'frog'
+export type Accessory = 'curl' | 'bow' | 'beret' | 'horn' | 'flower' | 'crown' | 'leaf' | 'none'
+
+export interface CuteSpec {
+  face: string
+  edge?: string
+  ear: EarType
+  earColor?: string
+  innerEar?: string
+  cheeks?: string
+  accessory?: Accessory
+  accessoryColor?: string
+  snout?: string
+  nose?: string
+  beak?: string
+  eyePatch?: string
+}
 
 export interface CharacterDef {
   id: string
@@ -19,10 +39,12 @@ export interface CharacterDef {
   unlockCostBananas: number
   /** The scene-world this character belongs to. */
   world: SceneId
-  /** Placeholder art until procedural/image art lands (M6). */
+  /** Emoji fallback (used in inline text like the unlock banner). */
   emoji: string
   /** Accent color for UI cards/celebrations. */
   accent: string
+  /** Procedural canvas art spec (drawn by render/cuteFaces.ts). */
+  cute?: CuteSpec
 }
 
 export interface ScenePalette {

@@ -1,7 +1,7 @@
 /** localStorage persistence for progress — safe when storage is unavailable. */
 import { ProgressStore } from './progress'
 
-const KEY = 'monkey-typing:progress:v1'
+const KEY = 'monkey-typing:progress:v2'
 
 export function loadProgress(): ProgressStore {
   try {
