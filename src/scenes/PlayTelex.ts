@@ -47,6 +47,7 @@ export class PlayTelex implements Scene {
     this.total = Math.min(10, words.length)
     this.targets = words.slice(0, this.total).map(buildTelexTarget)
     this.session = new TypingSession(this.targets[0]!.telex)
+    this.opts.tts?.speak(this.targets[0]!.display, 'vi')
   }
 
   private get current(): TelexTarget { return this.targets[this.wi]! }
@@ -82,6 +83,7 @@ export class PlayTelex implements Scene {
       this.wi += 1
       if (this.wi < this.targets.length) {
         this.session = new TypingSession(this.targets[this.wi]!.telex)
+        this.opts.tts?.speak(this.current.display, 'vi')
       } else {
         const accuracy = this.stats.accuracy
         const stars: 0 | 1 | 2 | 3 = accuracy >= 0.95 ? 3 : accuracy >= 0.85 ? 2 : accuracy >= 0.7 ? 1 : 0

@@ -22,6 +22,7 @@ import { PlayShark } from '../scenes/PlayShark'
 import { levelById, nextLevelId, LEVELS } from '../content/levels'
 import type { LevelDef } from '../content/types'
 import { Sfx } from '../audio/sfx'
+import { Tts } from '../audio/tts'
 
 export type ScreenId = 'menu' | 'character' | 'scene' | 'level' | 'play' | 'arcade' | 'shark' | 'results'
 
@@ -43,6 +44,7 @@ export class Game {
   private lang: Lang = 'vi'
   private screen: Scene
   private sfx = new Sfx({ volume: 0.45 })
+  private tts = new Tts()
   private lastResult?: { round: RoundOutcome; reward: ResultOutcome }
   private currentLevel?: LevelDef
 
@@ -54,7 +56,7 @@ export class Game {
     continueNext: () => this.continueNext(),
     save: () => saveProgress(this.progress),
     setLanguage: (l) => { this.lang = l; this.ctx.lang = l; setLang(l) },
-    toggleMute: () => { this.sfx.muted = !this.sfx.muted },
+    toggleMute: () => { const m = !this.sfx.muted; this.sfx.muted = m; this.tts.muted = m; if (m) this.tts.cancel() },
     isMuted: () => this.sfx.muted,
   }
 
@@ -113,6 +115,8 @@ export class Game {
     return new PlayArcade({
       characterId: this.progress.state.selectedChar,
       sfx: this.sfx,
+      tts: this.tts,
+      speakLang: 'en',
       levelId: 'arcade',
       onExit: () => this.go('menu'),
       onRoundComplete: (o) => this.onRoundComplete(o),
@@ -123,6 +127,8 @@ export class Game {
     return new PlayShark({
       characterId: this.progress.state.selectedChar,
       sfx: this.sfx,
+      tts: this.tts,
+      speakLang: 'en',
       levelId: 'shark',
       onExit: () => this.go('menu'),
       onRoundComplete: (o) => this.onRoundComplete(o),
@@ -135,6 +141,8 @@ export class Game {
     const base = {
       characterId: this.progress.state.selectedChar,
       sfx: this.sfx,
+      tts: this.tts,
+      speakLang: this.lang,
       onExit: () => this.go('level'),
       onRoundComplete: (o: RoundOutcome) => this.onRoundComplete(o),
     }

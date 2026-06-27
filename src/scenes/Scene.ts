@@ -17,6 +17,7 @@ export interface RoundOutcome {
 }
 
 import type { Sfx } from '../audio/sfx'
+import type { Tts } from '../audio/tts'
 
 /** Options for the practice scenes (wired by the app shell). */
 export interface PlayOpts {
@@ -29,4 +30,6 @@ export interface PlayOpts {
   words?: string[]
   title?: string
   sfx?: Sfx
+  tts?: Tts
+  speakLang?: 'en' | 'vi'
 }

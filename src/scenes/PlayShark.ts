@@ -20,17 +20,12 @@ import { characterById } from '../content/characters'
 import { KeyboardGuide, type GuideState } from '../keyboard/KeyboardGuide'
 import { centeredText, withAlpha } from '../render/draw'
 import { drawCharacterFace } from '../render/characterArt'
-
-const POOL = [
-  'cat', 'dog', 'sun', 'fish', 'jump', 'star', 'swim', 'wave', 'boat', 'crab',
-  'fast', 'type', 'blue', 'sea', 'run', 'win', 'gold', 'duck', 'frog', 'ship',
-]
+import { rampedPool } from '../content/words'
 
 const PUSH_PER_CHAR = 0.04
 const PUSH_PER_WORD = 0.45
 
 export class PlayShark implements Scene {
-  private pool: string[]
   private session: TypingSession
   private stats = new Stats()
   private combo = new Combo()
@@ -43,8 +38,7 @@ export class PlayShark implements Scene {
   private invuln = 0
   private ended = false
 
-  private bag: string[] = []
-  private lastWord = ''
+  private recent: string[] = []
   private timeMs = 0
   private pawT = 0
   private pulse = 0
@@ -53,29 +47,25 @@ export class PlayShark implements Scene {
   private guide = new KeyboardGuide()
 
   constructor(private readonly opts: PlayOpts = {}) {
-    this.pool = (opts.words && opts.words.length >= 6) ? opts.words : POOL
-    this.session = new TypingSession(this.nextWord())
+    this.session = new TypingSession(this.startWord())
   }
 
-  /** Draw from a shuffled bag so every word appears before any repeats. */
-  private nextWord(): string {
-    if (this.bag.length === 0) {
-      this.bag = [...this.pool]
-      for (let i = this.bag.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-        const tmp = this.bag[i]!
-        this.bag[i] = this.bag[j]!
-        this.bag[j] = tmp
-      }
-      // avoid a back-to-back repeat across refills
-      if (this.bag.length > 1 && this.bag[this.bag.length - 1] === this.lastWord) {
-        const tmp = this.bag[this.bag.length - 1]!
-        this.bag[this.bag.length - 1] = this.bag[0]!
-        this.bag[0] = tmp
-      }
+  /**
+   * Pick the next word from a difficulty-ramped pool (easy → hard as you clear
+   * more), avoiding the recent few so it never feels repetitive, speak it aloud,
+   * and return it.
+   */
+  private startWord(): string {
+    const pool = (this.opts.words && this.opts.words.length >= 6)
+      ? this.opts.words
+      : rampedPool(this.cleared / this.target)
+    let w = pool[Math.floor(Math.random() * pool.length)]!
+    for (let tries = 0; this.recent.includes(w) && tries < 25; tries++) {
+      w = pool[Math.floor(Math.random() * pool.length)]!
     }
-    const w = this.bag.pop()!
-    this.lastWord = w
+    this.recent.push(w)
+    if (this.recent.length > 8) this.recent.shift()
+    this.opts.tts?.speak(w, this.opts.speakLang ?? 'en')
     return w
   }
 
@@ -108,7 +98,7 @@ export class PlayShark implements Scene {
       this.opts.sfx?.wordDone()
       this.opts.sfx?.banana()
       if (this.cleared >= this.target) { this.finish(); return }
-      this.session = new TypingSession(this.nextWord())
+      this.session = new TypingSession(this.startWord())
     }
   }
 

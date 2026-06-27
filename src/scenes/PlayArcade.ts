@@ -15,11 +15,8 @@ import { characterById } from '../content/characters'
 import { KeyboardGuide, type GuideState } from '../keyboard/KeyboardGuide'
 import { centeredText, withAlpha } from '../render/draw'
 import { drawCharacterFace } from '../render/characterArt'
+import { rampedPool } from '../content/words'
 
-const DEFAULT_POOL = [
-  'cat', 'dog', 'sun', 'run', 'fox', 'bee', 'owl', 'fish', 'frog', 'duck',
-  'jump', 'star', 'moon', 'tree', 'cake', 'milk', 'ball', 'king', 'gold', 'wind',
-]
 const ENEMY_EMOJI = ['👾', '🦇', '🐛', '🌀', '👻', '🦅', '🐍', '🪨']
 
 /** Pick a word whose first letter is not already used by an active enemy. */
@@ -34,7 +31,6 @@ interface Particle { x: number; y: number; vx: number; vy: number; life: number;
 interface Beam { x1: number; y1: number; x2: number; y2: number; life: number }
 
 export class PlayArcade implements Scene {
-  private pool: string[]
   private enemies: Enemy[] = []
   private particles: Particle[] = []
   private beams: Beam[] = []
@@ -56,9 +52,7 @@ export class PlayArcade implements Scene {
   private ended = false
   private guide = new KeyboardGuide()
 
-  constructor(private readonly opts: PlayOpts = {}) {
-    this.pool = (opts.words && opts.words.length >= 6) ? opts.words : DEFAULT_POOL
-  }
+  constructor(private readonly opts: PlayOpts = {}) {}
 
   onKey(key: string): void {
     if (key === 'Escape') this.opts.onExit?.()
@@ -75,7 +69,10 @@ export class PlayArcade implements Scene {
       // lock onto the lowest enemy whose next letter matches
       const matches = this.enemies.filter((e) => e.word[e.typed] === ch)
       enemy = matches.sort((a, b) => b.y - a.y)[0]
-      if (enemy) this.lockedId = enemy.id
+      if (enemy) {
+        this.lockedId = enemy.id
+        this.opts.tts?.speak(enemy.word, this.opts.speakLang ?? 'en')
+      }
     }
     this.totalKeys += 1
     if (enemy && enemy.word[enemy.typed] === ch) {
@@ -139,7 +136,8 @@ export class PlayArcade implements Scene {
       this.spawnTimer = this.spawnEvery
       this.spawnEvery = Math.max(1100, this.spawnEvery - 60)
       const used = new Set(this.enemies.map((e) => e.word[0]!))
-      const word = pickWord(this.pool, used, Math.floor(Math.random() * 1_000_000))
+      const pool = rampedPool(this.destroyed / this.target)
+      const word = pickWord(pool, used, Math.floor(Math.random() * 1_000_000))
       if (word) {
         const x = this.lastW * (0.12 + Math.random() * 0.76)
         this.enemies.push({

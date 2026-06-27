@@ -49,6 +49,7 @@ export class PlayWord implements Scene {
 
   constructor(private readonly opts: PlayOpts = {}) {
     this.round = new Round(makeDrill(opts.words ?? STARTER_WORDS, this.total))
+    this.opts.tts?.speak(this.round.currentWord ?? '', this.opts.speakLang ?? 'en')
   }
 
   onKey(key: string): void {
@@ -76,6 +77,8 @@ export class PlayWord implements Scene {
           levelId: this.opts.levelId ?? 'practice-word',
           stars: out.stars, accuracy: out.accuracy, cleared: out.cleared,
         })
+      } else {
+        this.opts.tts?.speak(this.round.currentWord ?? '', this.opts.speakLang ?? 'en')
       }
     }
   }
