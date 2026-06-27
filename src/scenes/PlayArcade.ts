@@ -55,7 +55,6 @@ export class PlayArcade implements Scene {
   private wrongFlash = 0
   private ended = false
   private guide = new KeyboardGuide()
-  private spawnSeed = 1
 
   constructor(private readonly opts: PlayOpts = {}) {
     this.pool = (opts.words && opts.words.length >= 6) ? opts.words : DEFAULT_POOL
@@ -140,8 +139,7 @@ export class PlayArcade implements Scene {
       this.spawnTimer = this.spawnEvery
       this.spawnEvery = Math.max(1100, this.spawnEvery - 60)
       const used = new Set(this.enemies.map((e) => e.word[0]!))
-      const word = pickWord(this.pool, used, this.spawnSeed)
-      this.spawnSeed = (this.spawnSeed * 7 + 13) % 100000
+      const word = pickWord(this.pool, used, Math.floor(Math.random() * 1_000_000))
       if (word) {
         const x = this.lastW * (0.12 + Math.random() * 0.76)
         this.enemies.push({

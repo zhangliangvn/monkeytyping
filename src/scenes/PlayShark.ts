@@ -43,7 +43,8 @@ export class PlayShark implements Scene {
   private invuln = 0
   private ended = false
 
-  private wordSeed = 5
+  private bag: string[] = []
+  private lastWord = ''
   private timeMs = 0
   private pawT = 0
   private pulse = 0
@@ -56,9 +57,26 @@ export class PlayShark implements Scene {
     this.session = new TypingSession(this.nextWord())
   }
 
+  /** Draw from a shuffled bag so every word appears before any repeats. */
   private nextWord(): string {
-    this.wordSeed = (this.wordSeed * 7 + 11) % 100000
-    return this.pool[this.wordSeed % this.pool.length]!
+    if (this.bag.length === 0) {
+      this.bag = [...this.pool]
+      for (let i = this.bag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        const tmp = this.bag[i]!
+        this.bag[i] = this.bag[j]!
+        this.bag[j] = tmp
+      }
+      // avoid a back-to-back repeat across refills
+      if (this.bag.length > 1 && this.bag[this.bag.length - 1] === this.lastWord) {
+        const tmp = this.bag[this.bag.length - 1]!
+        this.bag[this.bag.length - 1] = this.bag[0]!
+        this.bag[0] = tmp
+      }
+    }
+    const w = this.bag.pop()!
+    this.lastWord = w
+    return w
   }
 
   private get drainPerSec(): number { return 0.12 + this.cleared * 0.006 }
