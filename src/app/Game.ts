@@ -17,11 +17,12 @@ import { ResultsScene } from '../scenes/ResultsScene'
 import { PlayWord } from '../scenes/PlayWord'
 import { PlayAbc } from '../scenes/PlayAbc'
 import { PlayTelex } from '../scenes/PlayTelex'
+import { PlayArcade } from '../scenes/PlayArcade'
 import { levelById } from '../content/levels'
 import type { LevelDef } from '../content/types'
 import { Sfx } from '../audio/sfx'
 
-export type ScreenId = 'menu' | 'character' | 'scene' | 'level' | 'play' | 'results'
+export type ScreenId = 'menu' | 'character' | 'scene' | 'level' | 'play' | 'arcade' | 'results'
 
 export interface GameCtx {
   progress: ProgressStore
@@ -64,6 +65,7 @@ export class Game {
     else if (id === 'character') this.screen = new CharacterSelectScene(this.ctx)
     else if (id === 'scene') this.screen = new SceneSelectScene(this.ctx)
     else if (id === 'level') this.screen = new LevelSelectScene(this.ctx)
+    else if (id === 'arcade') this.screen = this.makeArcade()
     else if (id === 'results' && this.lastResult) this.screen = new ResultsScene(this.ctx, this.lastResult)
     else this.screen = this.makePlay()
   }
@@ -73,21 +75,33 @@ export class Game {
     this.go('play')
   }
 
+  private onRoundComplete(o: RoundOutcome): void {
+    const reward = this.progress.recordResult(o.levelId, {
+      stars: o.stars, accuracy: o.accuracy, cleared: o.cleared,
+    })
+    saveProgress(this.progress)
+    if (reward.newChars.length > 0 || reward.newScenes.length > 0) this.sfx.unlock()
+    this.lastResult = { round: o, reward }
+    this.go('results')
+  }
+
+  private makeArcade(): Scene {
+    return new PlayArcade({
+      characterId: this.progress.state.selectedChar,
+      sfx: this.sfx,
+      levelId: 'arcade',
+      onExit: () => this.go('menu'),
+      onRoundComplete: (o) => this.onRoundComplete(o),
+    })
+  }
+
   private makePlay(): Scene {
     const lvl = this.currentLevel
     const base = {
       characterId: this.progress.state.selectedChar,
       sfx: this.sfx,
       onExit: () => this.go(lvl ? 'level' : 'menu'),
-      onRoundComplete: (o: RoundOutcome) => {
-        const reward = this.progress.recordResult(o.levelId, {
-          stars: o.stars, accuracy: o.accuracy, cleared: o.cleared,
-        })
-        saveProgress(this.progress)
-        if (reward.newChars.length > 0 || reward.newScenes.length > 0) this.sfx.unlock()
-        this.lastResult = { round: o, reward }
-        this.go('results')
-      },
+      onRoundComplete: (o: RoundOutcome) => this.onRoundComplete(o),
     }
     if (lvl) {
       const words = lvl.mode === 'telex' ? lvl.words?.vi : lvl.words?.[this.lang]
