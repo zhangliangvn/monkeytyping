@@ -67,7 +67,7 @@ export class LevelSelectScene implements Scene {
         ctx.strokeRect(rect.x, rect.y, rect.w, rect.h); ctx.restore()
       }
 
-      const icon = lvl.mode === 'abc' ? '🔤' : '📝'
+      const icon = lvl.mode === 'abc' ? '🔤' : lvl.mode === 'telex' ? '🇻🇳' : '📝'
       centeredText(ctx, open ? `${icon} ${i + 1}` : '🔒', cx, cy - cardH * 0.18,
         `700 ${Math.round(cardH * 0.26)}px 'Segoe UI'`, open ? '#fff' : withAlpha('#fff', 0.5))
       centeredText(ctx, lvl.title[lang], cx, cy + cardH * 0.12,

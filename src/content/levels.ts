@@ -83,6 +83,25 @@ export const LEVELS: LevelDef[] = [
       en: ['monkey', 'banana', 'jungle', 'typing', 'rocket', 'planet', 'ocean', 'desert'],
     },
   },
+  // ── Stage 5 · Space · Telex "superpower" (Vietnamese diacritics) ──
+  {
+    id: 'l13', stage: 5, world: 'space', mode: 'telex',
+    title: { vi: 'Telex: thêm dấu', en: 'Telex: add marks' },
+    keySet: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
+    words: {
+      vi: ['mèo', 'chó', 'cá', 'gà', 'bà', 'mẹ', 'nhà', 'bé', 'đi', 'ăn'],
+      en: ['mèo', 'chó', 'cá', 'gà', 'bà', 'mẹ', 'nhà', 'bé', 'đi', 'ăn'],
+    },
+  },
+  {
+    id: 'l14', stage: 5, world: 'space', mode: 'telex',
+    title: { vi: 'Telex: từ đầy đủ', en: 'Telex: full words' },
+    keySet: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
+    words: {
+      vi: ['nắng', 'trời', 'nước', 'bánh', 'sách', 'bút', 'mưa', 'kẹo', 'học', 'vui'],
+      en: ['nắng', 'trời', 'nước', 'bánh', 'sách', 'bút', 'mưa', 'kẹo', 'học', 'vui'],
+    },
+  },
 ]
 
 export const LEVEL_IDS = LEVELS.map((l) => l.id)

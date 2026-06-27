@@ -16,6 +16,7 @@ import { LevelSelectScene } from '../scenes/LevelSelectScene'
 import { ResultsScene } from '../scenes/ResultsScene'
 import { PlayWord } from '../scenes/PlayWord'
 import { PlayAbc } from '../scenes/PlayAbc'
+import { PlayTelex } from '../scenes/PlayTelex'
 import { levelById } from '../content/levels'
 import type { LevelDef } from '../content/types'
 import { Sfx } from '../audio/sfx'
@@ -89,10 +90,9 @@ export class Game {
       },
     }
     if (lvl) {
-      const opts = {
-        ...base, levelId: lvl.id, title: lvl.title[this.lang],
-        keys: lvl.keySet, words: lvl.words?.[this.lang],
-      }
+      const words = lvl.mode === 'telex' ? lvl.words?.vi : lvl.words?.[this.lang]
+      const opts = { ...base, levelId: lvl.id, title: lvl.title[this.lang], keys: lvl.keySet, words }
+      if (lvl.mode === 'telex') return new PlayTelex(opts)
       return lvl.mode === 'word' ? new PlayWord(opts) : new PlayAbc(opts)
     }
     const opts = { ...base, levelId: `practice-${this.playMode}` }

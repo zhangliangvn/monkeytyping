@@ -41,7 +41,7 @@ export interface SceneDef {
   palette: ScenePalette
 }
 
-export type GameMode = 'abc' | 'word'
+export type GameMode = 'abc' | 'word' | 'telex'
 export type Lang = 'vi' | 'en'
 
 export interface LevelDef {

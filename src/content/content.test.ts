@@ -3,6 +3,7 @@ import { CHARACTERS, CHARACTER_IDS, characterById } from './characters'
 import { SCENES, SCENE_IDS } from './scenes'
 import { LEVELS, nextLevelId } from './levels'
 import { fingerForChar } from './fingerMap'
+import { buildTelexTarget } from '../game/telex'
 
 describe('characters', () => {
   it('has 14 with unique ids', () => {
@@ -54,6 +55,20 @@ describe('levels', () => {
       expect(l.keySet.length, l.id).toBeGreaterThan(0)
       for (const k of l.keySet) {
         expect(fingerForChar(k), `${l.id}:${k}`).toBeDefined()
+      }
+    }
+  })
+
+  it('telex levels decompose to keystrokes that are all typeable', () => {
+    const telex = LEVELS.filter((l) => l.mode === 'telex')
+    expect(telex.length).toBeGreaterThan(0)
+    for (const l of telex) {
+      expect(l.words?.vi, l.id).toBeDefined()
+      for (const word of l.words!.vi) {
+        const target = buildTelexTarget(word)
+        for (const ch of target.telex) {
+          expect(fingerForChar(ch), `${l.id} "${word}" telex key "${ch}"`).toBeDefined()
+        }
       }
     }
   })
